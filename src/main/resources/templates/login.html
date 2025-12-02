@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .error {
+            color: red;
+            margin-bottom: 15px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+<h2>用户登录</h2>
+
+<!-- 显示错误信息 -->
+<div th:if="${param.error}" class="error">
+    用户名或密码错误！
+</div>
+
+<!-- 表单提交到 /login (POST) -->
+<form th:action="@{/login}" method="post">
+    <!-- 如果是从首页带 role 进来的，保留角色 -->
+    <input type="hidden" name="role" th:value="${role ?: 'user'}" />
+
+    <label for="username">用户名:</label>
+    <input type="text" id="username" name="username" required />
+
+    <label for="password">密码:</label>
+    <input type="password" id="password" name="password" required />
+
+    <button type="submit">登录</button>
+</form>
+
+<p><a th:href="@{/}">← 返回首页</a></p>
+</body>
+</html>
