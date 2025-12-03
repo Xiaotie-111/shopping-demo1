@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>注册 - 网上购物商城</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f7f9fc;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navbar-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-container {
+            max-width: 400px;
+            margin: 60px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .role-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .role-btn {
+            padding: 6px 16px;
+            border: 1px solid #ccc;
+            background: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95em;
+        }
+        .role-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* === 商品展示样式 === */
+        .product-showcase {
+            margin-top: 40px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .product-showcase h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .product-grid {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .product-item {
+            text-align: center;
+            width: 140px;
+        }
+        .product-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #eee;
+        }
+        .product-item p {
+            margin: 6px 0 0;
+            font-size: 0.95em;
+            color: #555;
+        }
+        .product-item strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="navbar-title">🛒 网上购物商城</div>
+    <div></div> <!-- 右侧留空 -->
+</div>
+
+<div class="form-container">
+    <h2>會員註冊</h2>
+
+    <div class="role-selector">
+        <button class="role-btn" th:classappend="${param.role != null && param.role[0] == 'user' ? 'active' : ''}"
+                onclick="setRole('user')">用户</button>
+        <button class="role-btn" th:classappend="${param.role != null && param.role[0] == 'merchant' ? 'active' : ''}"
+                onclick="setRole('merchant')">商家</button>
+    </div>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+
+    <form th:action="@{/register}" method="post">
+        <input type="hidden" name="role" th:value="${param.role != null ? param.role[0] : 'user'}" id="role-input">
+
+        <div class="form-group">
+            <label for="username">用户名</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">密码</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">确认密码</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+        </div>
+
+        <button type="submit" class="btn">立即注册</button>
+    </form>
+
+    <a th:href="@{/login(role=${param.role != null ? param.role[0] : 'user'})}" class="back-link">已有账号？去登录</a>
+</div>
+
+<!-- 商品展示区（已修正空格问题） -->
+<div class="product-showcase">
+    <h3>🔥 热门商品推荐</h3>
+    <div class="product-grid">
+        <div class="product-item">
+            <img src="/images/iphone17.png" alt="iPhone 17">
+            <p><strong>iPhone 17</strong></p>
+            <p>¥5999</p>
+        </div>
+        <div class="product-item">
+            <img src="/images/macbook-air.png" alt="MacBook Air">
+            <p><strong>MacBook Air</strong></p>
+            <p>¥8999</p>
+        </div>
+        <div class="product-item">
+            <img src="/images/airpods-pro.png" alt="AirPods Pro">
+            <p><strong>AirPods Pro</strong></p>
+            <p>¥1999</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setRole(role) {
+        const buttons = document.querySelectorAll('.role-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById('role-input').value = role;
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .error {
+            color: red;
+            margin-bottom: 15px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+
+        /* === 新增：商品展示区样式 === */
+        .product-showcase {
+            margin-top: 40px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+        .product-showcase h3 {
+            text-align: center;
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .product-grid {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+        }
+        .product-item {
+            text-align: center;
+            width: 80px;
+        }
+        .product-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid #eee;
+        }
+        .product-item p {
+            margin: 4px 0 0;
+            font-size: 0.85em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<h2>用户登录</h2>
+
+<!-- 显示错误信息 -->
+<div th:if="${param.error}" class="error">
+    用户名或密码错误！
+</div>
+
+<!-- 注册成功提示 -->
+<div th:if="${param.registered}" style="color: green; text-align: center; margin-bottom: 10px;">
+    注册成功！请登录。
+</div>
+
+<!-- 登录表单 -->
+<form th:action="@{/login}" method="post">
+    <input type="hidden" name="role" th:value="${role ?: 'user'}" />
+
+    <label for="username">用户名:</label>
+    <input type="text" id="username" name="username" required />
+
+    <label for="password">密码:</label>
+    <input type="password" id="password" name="password" required />
+
+    <button type="submit">登录</button>
+</form>
+
+<p><a th:href="@{/}">← 返回首页</a></p>
+
+<!-- 商品展示区 -->
+<div class="product-showcase">
+    <h3>🔥 热门商品</h3>
+    <div class="product-grid">
+        <div class="product-item">
+            <img src="/images/iphone17.png" alt="iPhone 17">
+            <p>iPhone 17</p>
+        </div>
+        <div class="product-item">
+            <img src="/images/macbook-air.png" alt="MacBook Air">
+            <p>MacBook Air</p>
+        </div>
+        <div class="product-item">
+            <img src="/images/airpods-pro.png" alt="AirPods Pro">
+            <p>AirPods Pro</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
