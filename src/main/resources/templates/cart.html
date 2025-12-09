@@ -1,294 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <title>购物车 - 网上购物商城</title>-->
-<!--    <style>-->
-<!--        body {-->
-<!--            font-family: Arial, sans-serif;-->
-<!--            margin: 0;-->
-<!--            padding: 0;-->
-<!--            background: #f7f9fc;-->
-<!--        }-->
-<!--        .navbar {-->
-<!--            display: flex;-->
-<!--            justify-content: space-between;-->
-<!--            align-items: center;-->
-<!--            padding: 15px 20px;-->
-<!--            background: white;-->
-<!--            box-shadow: 0 2px 4px rgba(0,0,0,0.1);-->
-<!--        }-->
-<!--        .navbar-title {-->
-<!--            font-size: 1.5em;-->
-<!--            font-weight: bold;-->
-<!--            color: #333;-->
-<!--        }-->
-<!--        .auth-buttons {-->
-<!--            display: flex;-->
-<!--            gap: 10px;-->
-<!--            align-items: center;-->
-<!--        }-->
-<!--        .auth-btn {-->
-<!--            padding: 6px 16px;-->
-<!--            border: none;-->
-<!--            border-radius: 4px;-->
-<!--            cursor: pointer;-->
-<!--            font-size: 0.9em;-->
-<!--            text-decoration: none;-->
-<!--            display: inline-block;-->
-<!--            text-align: center;-->
-<!--        }-->
-<!--        .logout-btn {-->
-<!--            background: #e74c3c;-->
-<!--            color: white;-->
-<!--        }-->
-
-<!--        .container {-->
-<!--            max-width: 1200px;-->
-<!--            margin: auto;-->
-<!--            padding: 20px;-->
-<!--        }-->
-<!--        h1 {-->
-<!--            text-align: center;-->
-<!--            color: #333;-->
-<!--            margin-top: 20px;-->
-<!--        }-->
-
-<!--        /* 购物车样式 */-->
-<!--        .cart-container {-->
-<!--            margin-top: 30px;-->
-<!--        }-->
-<!--        .cart-item {-->
-<!--            display: flex;-->
-<!--            justify-content: space-between;-->
-<!--            padding: 15px;-->
-<!--            border-bottom: 1px solid #ddd;-->
-<!--            align-items: center;-->
-<!--        }-->
-<!--        .cart-item img {-->
-<!--            width: 100px;-->
-<!--            height: 100px;-->
-<!--            object-fit: contain;-->
-<!--            background-color: #f0f0f0;-->
-<!--        }-->
-<!--        .item-details {-->
-<!--            flex-grow: 1;-->
-<!--            margin-left: 15px;-->
-<!--        }-->
-<!--        .item-name {-->
-<!--            font-weight: bold;-->
-<!--            margin: 0;-->
-<!--        }-->
-<!--        .item-price {-->
-<!--            color: #e63946;-->
-<!--            font-weight: bold;-->
-<!--        }-->
-<!--        .quantity-controls {-->
-<!--            display: flex;-->
-<!--            align-items: center;-->
-<!--            gap: 8px;-->
-<!--        }-->
-<!--        .qty-btn {-->
-<!--            width: 30px;-->
-<!--            height: 30px;-->
-<!--            background: #3498db;-->
-<!--            color: white;-->
-<!--            border: none;-->
-<!--            border-radius: 4px;-->
-<!--            cursor: pointer;-->
-<!--            font-size: 0.9em;-->
-<!--        }-->
-<!--        .qty-input {-->
-<!--            width: 60px;-->
-<!--            text-align: center;-->
-<!--            padding: 5px;-->
-<!--            border: 1px solid #ccc;-->
-<!--            border-radius: 4px;-->
-<!--        }-->
-<!--        .remove-btn {-->
-<!--            background: #e74c3c;-->
-<!--            color: white;-->
-<!--            border: none;-->
-<!--            padding: 5px 10px;-->
-<!--            border-radius: 4px;-->
-<!--            cursor: pointer;-->
-<!--            font-size: 0.9em;-->
-<!--        }-->
-<!--        .total {-->
-<!--            margin-top: 20px;-->
-<!--            font-size: 1.2em;-->
-<!--            font-weight: bold;-->
-<!--            text-align: right;-->
-<!--            color: #333;-->
-<!--        }-->
-<!--        .checkout-btn {-->
-<!--            background: #2ecc71;-->
-<!--            color: white;-->
-<!--            border: none;-->
-<!--            padding: 10px 20px;-->
-<!--            border-radius: 4px;-->
-<!--            cursor: pointer;-->
-<!--            font-size: 1em;-->
-<!--            margin-top: 20px;-->
-<!--            display: block;-->
-<!--            margin-left: auto;-->
-<!--        }-->
-<!--        .empty-cart {-->
-<!--            text-align: center;-->
-<!--            color: #666;-->
-<!--            padding: 40px;-->
-<!--        }-->
-<!--    </style>-->
-<!--</head>-->
-<!--<body>-->
-
-<!--&lt;!&ndash; 导航栏 &ndash;&gt;-->
-<!--<div class="navbar">-->
-<!--    <div class="navbar-title">🛒 网上购物商城</div>-->
-<!--    <div class="auth-buttons">-->
-<!--        <span style="color: #333;">-->
-<!--            欢迎,-->
-<!--            <b th:text="${session.username}"></b>-->
-<!--            (<b th:text="${session.role == 'user' ? '用户' : '商家'}"></b>)!-->
-<!--        </span>-->
-<!--        <a href="/" class="auth-btn logout-btn" style="margin-left: 10px;">返回首页</a>-->
-<!--    </div>-->
-<!--</div>-->
-
-<!--&lt;!&ndash; 主体 &ndash;&gt;-->
-<!--<div class="container">-->
-<!--    <h1>🛒 我的购物车</h1>-->
-
-<!--    &lt;!&ndash; 购物车内容 &ndash;&gt;-->
-<!--    <div class="cart-container" id="cartContent">-->
-<!--        <div class="empty-cart" id="emptyCart">-->
-<!--            🛒 您的购物车是空的。-->
-<!--        </div>-->
-<!--        <div id="cartItems" style="display: none;">-->
-<!--            &lt;!&ndash; 使用 JavaScript 动态渲染 &ndash;&gt;-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--    <div class="total" id="totalPrice">总计：¥0.00</div>-->
-<!--    <button class="checkout-btn" onclick="checkout()">去结算</button>-->
-<!--</div>-->
-
-<!--<script>-->
-<!--    // 商品名称到图片路径的映射-->
-<!--    const productImageMap = {-->
-<!--        "iPhone 17": "/images/iphone17.png",-->
-<!--        "MacBook Air": "/images/macbook-air.png",-->
-<!--        "AirPods Pro": "/images/airpods-pro.png"-->
-<!--    };-->
-
-<!--    // 页面加载完成后初始化购物车-->
-<!--    document.addEventListener('DOMContentLoaded', function() {-->
-<!--        renderCart();-->
-<!--    });-->
-
-<!--    // 渲染购物车-->
-<!--    function renderCart() {-->
-<!--        const cart = JSON.parse(localStorage.getItem('cart') || '[]');-->
-<!--        const cartItems = document.getElementById('cartItems');-->
-<!--        const emptyCart = document.getElementById('emptyCart');-->
-<!--        const totalPriceEl = document.getElementById('totalPrice');-->
-
-<!--        if (cart.length === 0) {-->
-<!--            cartItems.style.display = 'none';-->
-<!--            emptyCart.style.display = 'block';-->
-<!--            totalPriceEl.textContent = '总计：¥0.00';-->
-<!--            return;-->
-<!--        }-->
-
-<!--        emptyCart.style.display = 'none';-->
-<!--        cartItems.style.display = 'block';-->
-
-<!--        let html = '';-->
-<!--        let total = 0;-->
-
-<!--        cart.forEach(item => {-->
-<!--            const price = parseFloat(item.price);-->
-<!--            const subtotal = price * item.quantity;-->
-<!--            total += subtotal;-->
-
-<!--            // ✅ 根据商品名获取图片路径，若无则使用占位图-->
-<!--            const imgSrc = productImageMap[item.name] || '/images/placeholder.png';-->
-
-<!--            html += `-->
-<!--                <div class="cart-item">-->
-<!--                    <img src="${imgSrc}" alt="${item.name}" loading="lazy">-->
-<!--                    <div class="item-details">-->
-<!--                        <h4 class="item-name">${item.name}</h4>-->
-<!--                        <p class="item-price">¥${price.toFixed(2)}</p>-->
-<!--                    </div>-->
-<!--                    <div class="quantity-controls">-->
-<!--                        <button class="qty-btn" onclick="changeQuantity('${item.name.replace(/'/g, "\\'")}', -1)">-</button>-->
-<!--                        <input type="number" class="qty-input" value="${item.quantity}" min="1" onchange="updateQuantity('${item.name.replace(/'/g, "\\'")}', this.value)">-->
-<!--                        <button class="qty-btn" onclick="changeQuantity('${item.name.replace(/'/g, "\\'")}', 1)">+</button>-->
-<!--                    </div>-->
-<!--                    <button class="remove-btn" onclick="removeItem('${item.name.replace(/'/g, "\\'")}')">删除</button>-->
-<!--                </div>-->
-<!--            `;-->
-<!--        });-->
-
-<!--        cartItems.innerHTML = html;-->
-<!--        totalPriceEl.textContent = `总计：¥${total.toFixed(2)}`;-->
-<!--    }-->
-
-<!--    // 修改数量-->
-<!--    function changeQuantity(name, delta) {-->
-<!--        let cart = JSON.parse(localStorage.getItem('cart') || '[]');-->
-<!--        const item = cart.find(i => i.name === name);-->
-<!--        if (item) {-->
-<!--            item.quantity += delta;-->
-<!--            if (item.quantity < 1) {-->
-<!--                item.quantity = 1;-->
-<!--            }-->
-<!--            localStorage.setItem('cart', JSON.stringify(cart));-->
-<!--            renderCart();-->
-<!--        }-->
-<!--    }-->
-
-<!--    // 手动输入数量-->
-<!--    function updateQuantity(name, value) {-->
-<!--        const num = parseInt(value);-->
-<!--        if (isNaN(num) || num < 1) {-->
-<!--            alert('数量必须大于0！');-->
-<!--            return;-->
-<!--        }-->
-<!--        let cart = JSON.parse(localStorage.getItem('cart') || '[]');-->
-<!--        const item = cart.find(i => i.name === name);-->
-<!--        if (item) {-->
-<!--            item.quantity = num;-->
-<!--            localStorage.setItem('cart', JSON.stringify(cart));-->
-<!--            renderCart();-->
-<!--        }-->
-<!--    }-->
-
-<!--    // 删除商品-->
-<!--    function removeItem(name) {-->
-<!--        if (confirm('确定要删除该商品吗？')) {-->
-<!--            let cart = JSON.parse(localStorage.getItem('cart') || '[]');-->
-<!--            cart = cart.filter(item => item.name !== name);-->
-<!--            localStorage.setItem('cart', JSON.stringify(cart));-->
-<!--            renderCart();-->
-<!--        }-->
-<!--    }-->
-
-<!--    // 去结算-->
-<!--    function checkout() {-->
-<!--        const cart = JSON.parse(localStorage.getItem('cart') || '[]');-->
-<!--        if (cart.length === 0) {-->
-<!--            alert('购物车为空，请先添加商品！');-->
-<!--            return;-->
-<!--        }-->
-<!--        alert('模拟结算流程：\n\n订单已提交，等待支付！\n\n实际项目中会跳转到支付页面。');-->
-<!--    }-->
-<!--</script>-->
-
-<!--</body>-->
-<!--</html>-->
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -449,6 +158,113 @@
         .continue-shopping:hover {
             text-decoration: underline;
         }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .payment-options {
+            margin-bottom: 20px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .payment-option:hover {
+            border-color: #3498db;
+            background-color: #f0f7ff;
+        }
+
+        .payment-option.selected {
+            border-color: #3498db;
+            background-color: #e8f4fd;
+        }
+
+        .payment-option input[type="radio"] {
+            display: none;
+        }
+
+        .payment-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .payment-icon {
+            font-size: 1.5em;
+        }
+
+        .confirm-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        @keyframes slideIn {
+            from {margin-top: 0; opacity: 0;}
+            to {margin-top: 10%; opacity: 1;}
+        }
     </style>
 </head>
 <body>
@@ -466,7 +282,7 @@
     </div>
 </div>
 
-<!-- 主体 -->
+<!-- 主体内容 -->
 <div class="container">
     <h1>🛒 我的购物车</h1>
 
@@ -493,37 +309,34 @@
                 <tr th:each="item : ${cartItems}">
                     <td>
                         <div style="display: flex; align-items: center;">
-                            <img th:src="@{${item.name == 'iPhone 17' ? '/images/iphone17.png' : item.name == 'MacBook Air' ? '/images/macbook-air.png' : item.name == 'AirPods Pro' ? '/images/airpods-pro.png' : '/images/placeholder.png'}}"
+                            <img th:src="${item.product.imageUrl}"
                                  alt="商品图片" class="item-image">
-                            <div class="item-name" th:text="${item.name}" style="margin-left: 15px;"></div>
+                            <div class="item-name" th:text="${item.product.name}" style="margin-left: 15px;"></div>
                         </div>
                     </td>
                     <td>
-                        <span class="item-price" th:text="'¥' + ${#numbers.formatDecimal(item.price, 1, 2)}"></span>
+                        <span class="item-price" th:text="'¥' + ${item.product.price}"></span>
                     </td>
                     <td>
                         <div class="quantity-controls">
                             <form th:action="@{/update-cart}" method="post" style="display: inline;">
-                                <input type="hidden" name="name" th:value="${item.name}">
+                                <input type="hidden" name="productId" th:value="${item.product.id}">
                                 <button type="submit" name="quantity" th:value="${item.quantity - 1}" class="qty-btn"
                                         th:disabled="${item.quantity <= 1}">-</button>
                             </form>
                             <input type="number" class="qty-input" th:value="${item.quantity}" min="1" readonly>
                             <form th:action="@{/update-cart}" method="post" style="display: inline;">
-                                <input type="hidden" name="name" th:value="${item.name}">
+                                <input type="hidden" name="productId" th:value="${item.product.id}">
                                 <button type="submit" name="quantity" th:value="${item.quantity + 1}" class="qty-btn">+</button>
                             </form>
                         </div>
                     </td>
 
                     <td>
-                        <span class="item-subtotal" th:text="'¥' + ${#numbers.formatDecimal(item.subtotal, 1, 2)}"></span>
+                        <span class="item-subtotal" th:text="'¥' + ${item.subtotal}"></span>
                     </td>
                     <td>
-                        <form th:action="@{/remove-from-cart}" method="post">
-                            <input type="hidden" name="name" th:value="${item.name}">
-                            <button type="submit" class="remove-btn">删除</button>
-                        </form>
+                        <a th:href="@{/remove-from-cart(productId=${item.product.id})}" class="remove-btn">删除</a>
                     </td>
                 </tr>
                 </tbody>
@@ -532,22 +345,131 @@
             <div class="cart-summary">
                 <div>
                     <a href="/" class="continue-shopping">继续购物</a>
+                    <a href="/clear-cart" class="remove-btn" style="margin-left: 10px;">清空购物车</a>
                 </div>
                 <div style="text-align: right;">
                     <div class="total-price">
-                        总计：<span th:text="'¥' + ${#aggregates.sum(cartItems.![subtotal])}"></span>
+                        总计：<span th:text="'¥' + ${totalPrice}"></span>
                     </div>
                     <button class="checkout-btn" onclick="checkout()">去结算</button>
                 </div>
-            </div>
         </div>
     </div>
 </div>
 
+<!-- 支付选项模态框 -->
+<div id="paymentModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">选择支付方式</div>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="payment-options">
+            <div class="payment-option" onclick="selectPayment('wechat')">
+                <input type="radio" id="wechat" name="paymentMethod" value="wechat" checked>
+                <div class="payment-name">
+                    <span class="payment-icon">💚</span>
+                    <span>微信支付</span>
+                </div>
+                <span class="checkmark" id="wechat-check">✓</span>
+            </div>
+            <div class="payment-option" onclick="selectPayment('later')">
+                <input type="radio" id="later" name="paymentMethod" value="later">
+                <div class="payment-name">
+                    <span class="payment-icon">💰</span>
+                    <span>先用后付（0元下单，确认收货后付款）</span>
+                </div>
+                <span class="checkmark" id="later-check"></span>
+            </div>
+            <div class="payment-option" onclick="selectPayment('alipay')">
+                <input type="radio" id="alipay" name="paymentMethod" value="alipay">
+                <div class="payment-name">
+                    <span class="payment-icon">💙</span>
+                    <span>支付宝</span>
+                </div>
+                <span class="checkmark" id="alipay-check"></span>
+            </div>
+            <div class="payment-option" onclick="selectPayment('wechat_friend')">
+                <input type="radio" id="wechat_friend" name="paymentMethod" value="wechat_friend">
+                <div class="payment-name">
+                    <span class="payment-icon">👥</span>
+                    <span>找微信好友支付</span>
+                </div>
+                <span class="checkmark" id="wechat_friend-check"></span>
+            </div>
+            <div class="payment-option" onclick="selectPayment('qq_wallet')">
+                <input type="radio" id="qq_wallet" name="paymentMethod" value="qq_wallet">
+                <div class="payment-name">
+                    <span class="payment-icon">🐧</span>
+                    <span>QQ钱包</span>
+                </div>
+                <span class="checkmark" id="qq_wallet-check"></span>
+            </div>
+            <div class="payment-option" onclick="selectPayment('huabei')">
+                <input type="radio" id="huabei" name="paymentMethod" value="huabei">
+                <div class="payment-name">
+                    <span class="payment-icon">💳</span>
+                    <span>花呗</span>
+                </div>
+                <span class="checkmark" id="huabei-check"></span>
+            </div>
+        </div>
+        <button class="confirm-btn" onclick="confirmPayment()">确认支付方式</button>
+    </div>
+</div>
+
 <script>
-    // 去结算
+    let selectedPayment = 'wechat';
+
+    // 显示支付选项模态框
     function checkout() {
-        alert('模拟结算流程：\n\n订单已提交，等待支付！\n\n实际项目中会跳转到支付页面。');
+        document.getElementById('paymentModal').style.display = 'block';
+    }
+
+    // 关闭模态框
+    function closeModal() {
+        document.getElementById('paymentModal').style.display = 'none';
+    }
+
+    // 选择支付方式
+    function selectPayment(payment) {
+        selectedPayment = payment;
+        
+        // 移除所有选中状态
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        
+        // 添加选中状态
+        document.querySelectorAll('.payment-option').forEach(option => {
+            const radio = option.querySelector('input[type="radio"]');
+            if (radio.value === payment) {
+                option.classList.add('selected');
+            }
+        });
+        
+        // 更新勾选标记
+        document.querySelectorAll('.checkmark').forEach(check => {
+            check.textContent = '';
+        });
+        document.getElementById(payment + '-check').textContent = '✓';
+    }
+
+    // 确认支付方式并跳转
+    function confirmPayment() {
+        // 保存选中的支付方式到sessionStorage或通过URL参数传递
+        sessionStorage.setItem('paymentMethod', selectedPayment);
+        
+        // 跳转到结算页面
+        window.location.href = '/checkout';
+    }
+
+    // 点击模态框外部关闭
+    window.onclick = function(event) {
+        const modal = document.getElementById('paymentModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
     }
 </script>
 
