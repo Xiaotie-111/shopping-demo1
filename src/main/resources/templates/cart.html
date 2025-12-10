@@ -174,12 +174,19 @@
 
         .modal-content {
             background-color: white;
-            margin: 10% auto;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
             padding: 20px;
             border-radius: 8px;
             width: 300px;
+            max-height: 80vh;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             animation: slideIn 0.3s;
+            cursor: move;
+            display: flex;
+            flex-direction: column;
         }
 
         .modal-header {
@@ -187,6 +194,18 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            cursor: move;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            cursor: default;
+        }
+
+        .modal-footer {
+            margin-top: auto;
         }
 
         .modal-title {
@@ -205,9 +224,18 @@
 
         .payment-options {
             margin-bottom: 20px;
+            cursor: default;
         }
 
-        .payment-option {
+        .address-options {
+            cursor: default;
+        }
+
+        .confirm-btn {
+            cursor: pointer;
+        }
+
+        .payment-option, .address-option {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -219,12 +247,12 @@
             transition: all 0.2s;
         }
 
-        .payment-option:hover {
+        .payment-option:hover, .address-option:hover {
             border-color: #3498db;
             background-color: #f0f7ff;
         }
 
-        .payment-option.selected {
+        .payment-option.selected, .address-option.selected {
             border-color: #3498db;
             background-color: #e8f4fd;
         }
@@ -276,7 +304,7 @@
         <span style="color: #333;">
             欢迎,
             <b th:text="${session.username}"></b>
-            (<b th:text="${session.role == 'user' ? '用户' : '商家'}"></b>)!
+            (<b th:text="${session.role == 'user' ? '用户' : '管理员'}"></b>)!
         </span>
         <a href="/" class="auth-btn logout-btn" style="margin-left: 10px;">返回首页</a>
     </div>
@@ -364,57 +392,89 @@
             <div class="modal-title">选择支付方式</div>
             <button class="close-btn" onclick="closeModal()">&times;</button>
         </div>
-        <div class="payment-options">
-            <div class="payment-option" onclick="selectPayment('wechat')">
-                <input type="radio" id="wechat" name="paymentMethod" value="wechat" checked>
-                <div class="payment-name">
-                    <span class="payment-icon">💚</span>
-                    <span>微信支付</span>
+        
+        <div class="modal-body">
+            <!-- 收货地址选择 -->
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-size: 1.1em; margin-bottom: 15px; color: #333;">选择收货地址</h3>
+                <div class="address-options">
+                    <!-- 默认地址 -->
+                    <div class="address-option" onclick="selectAddress('address1')">
+                        <input type="radio" id="address1" name="shippingAddress" value="address1" checked>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">张三 (13800138000)</div>
+                            <div style="color: #666;">广东省 深圳市 南山区 科技园路1号</div>
+                        </div>
+                        <span class="checkmark" id="address1-check">✓</span>
+                    </div>
+                    <!-- 其他地址 -->
+                    <div class="address-option" onclick="selectAddress('address2')">
+                        <input type="radio" id="address2" name="shippingAddress" value="address2">
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">李四 (13900139000)</div>
+                            <div style="color: #666;">北京市 北京市 海淀区 中关村大街1号</div>
+                        </div>
+                        <span class="checkmark" id="address2-check"></span>
+                    </div>
                 </div>
-                <span class="checkmark" id="wechat-check">✓</span>
             </div>
-            <div class="payment-option" onclick="selectPayment('later')">
-                <input type="radio" id="later" name="paymentMethod" value="later">
-                <div class="payment-name">
-                    <span class="payment-icon">💰</span>
-                    <span>先用后付（0元下单，确认收货后付款）</span>
+            
+            <!-- 支付方式选择 -->
+            <div class="payment-options">
+                <div class="payment-option" onclick="selectPayment('wechat')">
+                    <input type="radio" id="wechat" name="paymentMethod" value="wechat" checked>
+                    <div class="payment-name">
+                        <span class="payment-icon">💚</span>
+                        <span>微信支付</span>
+                    </div>
+                    <span class="checkmark" id="wechat-check">✓</span>
                 </div>
-                <span class="checkmark" id="later-check"></span>
-            </div>
-            <div class="payment-option" onclick="selectPayment('alipay')">
-                <input type="radio" id="alipay" name="paymentMethod" value="alipay">
-                <div class="payment-name">
-                    <span class="payment-icon">💙</span>
-                    <span>支付宝</span>
+                <div class="payment-option" onclick="selectPayment('later')">
+                    <input type="radio" id="later" name="paymentMethod" value="later">
+                    <div class="payment-name">
+                        <span class="payment-icon">💰</span>
+                        <span>先用后付（0元下单，确认收货后付款）</span>
+                    </div>
+                    <span class="checkmark" id="later-check"></span>
                 </div>
-                <span class="checkmark" id="alipay-check"></span>
-            </div>
-            <div class="payment-option" onclick="selectPayment('wechat_friend')">
-                <input type="radio" id="wechat_friend" name="paymentMethod" value="wechat_friend">
-                <div class="payment-name">
-                    <span class="payment-icon">👥</span>
-                    <span>找微信好友支付</span>
+                <div class="payment-option" onclick="selectPayment('alipay')">
+                    <input type="radio" id="alipay" name="paymentMethod" value="alipay">
+                    <div class="payment-name">
+                        <span class="payment-icon">💙</span>
+                        <span>支付宝</span>
+                    </div>
+                    <span class="checkmark" id="alipay-check"></span>
                 </div>
-                <span class="checkmark" id="wechat_friend-check"></span>
-            </div>
-            <div class="payment-option" onclick="selectPayment('qq_wallet')">
-                <input type="radio" id="qq_wallet" name="paymentMethod" value="qq_wallet">
-                <div class="payment-name">
-                    <span class="payment-icon">🐧</span>
-                    <span>QQ钱包</span>
+                <div class="payment-option" onclick="selectPayment('wechat_friend')">
+                    <input type="radio" id="wechat_friend" name="paymentMethod" value="wechat_friend">
+                    <div class="payment-name">
+                        <span class="payment-icon">👥</span>
+                        <span>找微信好友支付</span>
+                    </div>
+                    <span class="checkmark" id="wechat_friend-check"></span>
                 </div>
-                <span class="checkmark" id="qq_wallet-check"></span>
-            </div>
-            <div class="payment-option" onclick="selectPayment('huabei')">
-                <input type="radio" id="huabei" name="paymentMethod" value="huabei">
-                <div class="payment-name">
-                    <span class="payment-icon">💳</span>
-                    <span>花呗</span>
+                <div class="payment-option" onclick="selectPayment('qq_wallet')">
+                    <input type="radio" id="qq_wallet" name="paymentMethod" value="qq_wallet">
+                    <div class="payment-name">
+                        <span class="payment-icon">🐧</span>
+                        <span>QQ钱包</span>
+                    </div>
+                    <span class="checkmark" id="qq_wallet-check"></span>
                 </div>
-                <span class="checkmark" id="huabei-check"></span>
+                <div class="payment-option" onclick="selectPayment('huabei')">
+                    <input type="radio" id="huabei" name="paymentMethod" value="huabei">
+                    <div class="payment-name">
+                        <span class="payment-icon">💳</span>
+                        <span>花呗</span>
+                    </div>
+                    <span class="checkmark" id="huabei-check"></span>
+                </div>
             </div>
         </div>
-        <button class="confirm-btn" onclick="confirmPayment()">确认支付方式</button>
+        
+        <div class="modal-footer">
+            <button class="confirm-btn" onclick="confirmPayment()">确认支付方式</button>
+        </div>
     </div>
 </div>
 
@@ -431,11 +491,39 @@
         document.getElementById('paymentModal').style.display = 'none';
     }
 
+    // 地址选择
+    let selectedAddress = 'address1';
+    
+    function selectAddress(address) {
+        selectedAddress = address;
+        
+        // 移除所有地址选中状态
+        document.querySelectorAll('.address-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        
+        // 添加选中状态
+        document.querySelectorAll('.address-option').forEach(option => {
+            const radio = option.querySelector('input[type="radio"]');
+            if (radio.value === address) {
+                option.classList.add('selected');
+            }
+        });
+        
+        // 更新勾选标记
+        document.querySelectorAll('.address-option .checkmark').forEach(check => {
+            check.textContent = '';
+        });
+        document.getElementById(address + '-check').textContent = '✓';
+    }
+    
     // 选择支付方式
+    // selectedPayment 已在前面声明，这里不再重复声明
+    
     function selectPayment(payment) {
         selectedPayment = payment;
         
-        // 移除所有选中状态
+        // 移除所有支付方式选中状态
         document.querySelectorAll('.payment-option').forEach(option => {
             option.classList.remove('selected');
         });
@@ -449,7 +537,7 @@
         });
         
         // 更新勾选标记
-        document.querySelectorAll('.checkmark').forEach(check => {
+        document.querySelectorAll('.payment-option .checkmark').forEach(check => {
             check.textContent = '';
         });
         document.getElementById(payment + '-check').textContent = '✓';
@@ -457,12 +545,63 @@
 
     // 确认支付方式并跳转
     function confirmPayment() {
-        // 保存选中的支付方式到sessionStorage或通过URL参数传递
+        // 保存选中的支付方式和地址到sessionStorage
         sessionStorage.setItem('paymentMethod', selectedPayment);
+        sessionStorage.setItem('selectedAddress', selectedAddress);
         
         // 跳转到结算页面
         window.location.href = '/checkout';
     }
+
+    // 模态框拖动功能
+    let modal = document.getElementById('paymentModal');
+    let modalContent = document.querySelector('.modal-content');
+    let isDragging = false;
+    let dragStartX, dragStartY;
+    let modalStartX, modalStartY;
+
+    // 鼠标按下事件 - 开始拖动
+    modalContent.addEventListener('mousedown', function(e) {
+        // 只有点击模态框头部区域才允许拖动
+        if (e.target.closest('.modal-header')) {
+            isDragging = true;
+            
+            // 记录鼠标起始位置
+            dragStartX = e.clientX;
+            dragStartY = e.clientY;
+            
+            // 记录模态框起始位置
+            modalStartX = modalContent.offsetLeft;
+            modalStartY = modalContent.offsetTop;
+            
+            // 设置鼠标样式
+            document.body.style.cursor = 'grabbing';
+        }
+    });
+
+    // 鼠标移动事件 - 拖动模态框
+    document.addEventListener('mousemove', function(e) {
+        if (isDragging) {
+            // 计算鼠标移动的距离
+            const offsetX = e.clientX - dragStartX;
+            const offsetY = e.clientY - dragStartY;
+            
+            // 更新模态框位置
+            modalContent.style.left = modalStartX + offsetX + 'px';
+            modalContent.style.top = modalStartY + offsetY + 'px';
+            
+            // 移除transform以避免冲突
+            modalContent.style.transform = 'none';
+        }
+    });
+
+    // 鼠标释放事件 - 结束拖动
+    document.addEventListener('mouseup', function() {
+        if (isDragging) {
+            isDragging = false;
+            document.body.style.cursor = 'default';
+        }
+    });
 
     // 点击模态框外部关闭
     window.onclick = function(event) {

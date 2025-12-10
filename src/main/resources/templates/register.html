@@ -158,8 +158,8 @@
     <div class="role-selector">
         <button class="role-btn" th:classappend="${param.role != null && param.role[0] == 'user' ? 'active' : ''}"
                 onclick="setRole('user')">用户</button>
-        <button class="role-btn" th:classappend="${param.role != null && param.role[0] == 'merchant' ? 'active' : ''}"
-                onclick="setRole('merchant')">商家</button>
+        <button class="role-btn" th:classappend="${param.role != null && param.role[0] == 'admin' ? 'active' : ''}"
+             onclick="setRole('admin')">管理员</button>
     </div>
 
     <div th:if="${error}" class="error" th:text="${error}"></div>

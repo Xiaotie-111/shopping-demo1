@@ -185,7 +185,7 @@
         <span style="color: #333;">
             欢迎,
             <b th:text="${session.username}"></b>
-            (<b th:text="${session.role == 'user' ? '用户' : '商家'}"></b>)!
+            (<b th:text="${session.role == 'user' ? '用户' : '管理员'}"></b>)!
         </span>
         <a href="/" class="auth-btn logout-btn" style="margin-left: 10px;">返回首页</a>
     </div>
@@ -279,15 +279,16 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn">提交订单</button>
+                <button type="submit" class="btn">确认支付</button>
             </form>
         </div>
     </div>
 </div>
 
 <script>
-    // 页面加载时，从sessionStorage获取并设置支付方式
+    // 页面加载时，从sessionStorage获取并设置支付方式和地址信息
     window.onload = function() {
+        // 获取并设置支付方式
         const paymentMethod = sessionStorage.getItem('paymentMethod');
         if (paymentMethod) {
             // 设置对应的radio按钮为选中状态
@@ -297,6 +298,23 @@
             }
             // 清除sessionStorage中的支付方式，避免影响下次使用
             sessionStorage.removeItem('paymentMethod');
+        }
+        
+        // 获取并设置收货地址
+        const selectedAddress = sessionStorage.getItem('selectedAddress');
+        if (selectedAddress) {
+            // 根据选择的地址设置表单信息
+            if (selectedAddress === 'address1') {
+                document.getElementById('receiverName').value = '张三';
+                document.getElementById('receiverPhone').value = '13800138000';
+                document.getElementById('receiverAddress').value = '广东省 深圳市 南山区 科技园路1号';
+            } else if (selectedAddress === 'address2') {
+                document.getElementById('receiverName').value = '李四';
+                document.getElementById('receiverPhone').value = '13900139000';
+                document.getElementById('receiverAddress').value = '北京市 北京市 海淀区 中关村大街1号';
+            }
+            // 清除sessionStorage中的地址信息，避免影响下次使用
+            sessionStorage.removeItem('selectedAddress');
         }
     };
 

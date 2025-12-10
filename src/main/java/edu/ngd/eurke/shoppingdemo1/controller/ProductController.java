@@ -113,9 +113,9 @@ public class ProductController {
     // 跳转到编辑页面（GET）
     @GetMapping("/edit-product/{id}")
     public String showEditForm(@PathVariable("id") Long productId, Model model, HttpSession session) {
-        // 检查用户是否已登录且为商家角色
+        // 检查用户是否已登录且为管理员角色
         String role = (String) session.getAttribute("role");
-        if (role == null || !"merchant".equals(role)) {
+        if (role == null || !"admin".equals(role)) {
             model.addAttribute("message", "您没有权限访问此页面");
             return "message";
         }
@@ -139,9 +139,9 @@ public class ProductController {
                                 @RequestParam int stock,
                                 Model model,
                                 HttpSession session) {
-        // 检查用户是否已登录且为商家角色
+        // 检查用户是否已登录且为管理员角色
         String role = (String) session.getAttribute("role");
-        if (role == null || !"merchant".equals(role)) {
+        if (role == null || !"admin".equals(role)) {
             model.addAttribute("message", "您没有权限执行此操作");
             return "message";
         }

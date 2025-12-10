@@ -159,7 +159,7 @@
         <span style="color: #333;">
             欢迎,
             <b th:text="${session.username}"></b>
-            (<b th:text="${session.role == 'user' ? '用户' : '商家'}"></b>)!
+            (<b th:text="${session.role == 'user' ? '用户' : '管理员'}"></b>)!
         </span>
         <a href="/" class="auth-btn logout-btn" style="margin-left: 10px;">返回首页</a>
     </div>
