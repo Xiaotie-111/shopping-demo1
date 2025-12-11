@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>库存预警</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            grid-template-rows: 60px 1fr;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            height: 100vh;
+        }
+        
+        /* 顶部标题栏 */
+        .header {
+            grid-area: header;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .header .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header .welcome {
+            margin-right: 20px;
+            font-size: 14px;
+        }
+        
+        .header .btn-logout {
+            background-color: #f0f2f5;
+            color: #666;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        /* 左侧导航栏 */
+        .sidebar {
+            grid-area: sidebar;
+            background-color: white;
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+            padding: 20px 0;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar a:hover {
+            background-color: #f5f7fa;
+            color: #667eea;
+        }
+        
+        .sidebar a.active {
+            background-color: #f0f2f5;
+            color: #667eea;
+            border-left-color: #667eea;
+        }
+        
+        /* 主要内容区域 */
+        .main {
+            grid-area: main;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .main h2 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        /* 表格容器 */
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table-container th,
+        .table-container td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        
+        .table-container th {
+            background-color: #fafbfc;
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .table-container td {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* 状态标签 */
+        .status {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .status.warning {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-adjust {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .btn-adjust:hover {
+            background-color: #ffe0b2;
+        }
+        
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .pagination a {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .pagination a:hover {
+            background-color: #f5f7fa;
+            color: #667eea;
+            border-color: #667eea;
+        }
+        
+        .pagination .active {
+            background-color: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题栏 -->
+        <header class="header">
+            <h1>电商管理系统</h1>
+            <div class="user-info">
+                <span class="welcome">欢迎，管理员</span>
+                <button class="btn-logout" onclick="logout()">退出登录</button>
+            </div>
+        </header>
+        
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar">
+            <ul>
+                <li><a href="/index"><i class="icon-home"></i>首页</a></li>
+                <li><a href="/category/list"><i class="icon-category"></i>分类管理</a></li>
+                <li><a href="/product/list"><i class="icon-goods"></i>商品管理</a></li>
+                <li><a href="/spec/list"><i class="icon-spec"></i>规格配置</a></li>
+                <li><a href="/inventory/list" class="active"><i class="icon-inventory"></i>库存管理</a></li>
+                <li><a href="/order/list"><i class="icon-orders"></i>订单管理</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 主要内容区域 -->
+        <main class="main">
+            <h2>库存预警</h2>
+            
+            <!-- 表格容器 -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>库存ID</th>
+                            <th>商品名称</th>
+                            <th>当前库存</th>
+                            <th>最低阈值</th>
+                            <th>预警状态</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="alert : ${alerts}">
+                            <td th:text="${alert.id}"></td>
+                            <td th:text="${alert.productName}"></td>
+                            <td th:text="${alert.currentStock}"></td>
+                            <td th:text="${alert.minThreshold}"></td>
+                            <td>
+                                <span class="status warning">库存不足</span>
+                            </td>
+                            <td th:text="${#dates.format(alert.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td>
+                                <button class="btn btn-adjust" th:onclick="'adjustInventory(' + ${alert.id} + ')'">调整库存</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- 分页 -->
+            <div class="pagination">
+                <a href="#">上一页</a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">下一页</a>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // 退出登录功能
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                window.location.href = '/logout';
+            }
+        }
+        
+        // 调整库存
+        function adjustInventory(id) {
+            window.location.href = '/inventory/adjust/' + id;
+        }
+    </script>
+</body>
+</html>

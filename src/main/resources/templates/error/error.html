@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>错误页面 - 电商平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .error-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            max-width: 600px;
+            text-align: center;
+        }
+        
+        .error-icon {
+            font-size: 6rem;
+            margin-bottom: 1.5rem;
+            color: #e53e3e;
+        }
+        
+        .error-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .error-message {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .error-url {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            margin-bottom: 2rem;
+            color: #666;
+            word-break: break-all;
+        }
+        
+        .error-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #5a6fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: #f8f9fa;
+            color: #666;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 2rem;
+            }
+            
+            .error-title {
+                font-size: 1.5rem;
+            }
+            
+            .error-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">❌</div>
+        <h1 class="error-title">出现错误</h1>
+        <p class="error-message" th:text="${errorMessage}">系统发生了一个错误</p>
+        <div class="error-url" th:text="${errorUrl}"></div>
+        <div class="error-actions">
+            <a href="/index" class="btn btn-primary">返回首页</a>
+            <button class="btn btn-secondary" onclick="history.back()">返回上一页</button>
+        </div>
+    </div>
+</body>
+</html>

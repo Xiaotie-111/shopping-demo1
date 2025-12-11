@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>京东热卖 - 正品低价、品质保障、快速配送</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        /* 顶部导航栏 */
+        .top-nav {
+            background-color: #e31235;
+            color: white;
+            padding: 10px 0;
+            font-size: 12px;
+        }
+        
+        .top-nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .top-nav-left a,
+        .top-nav-right a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        /* 主导航栏 */
+        .main-nav {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px 0;
+        }
+        
+        .main-nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e31235;
+            margin-right: 30px;
+        }
+        
+        .search-bar {
+            flex: 1;
+            display: flex;
+            margin-right: 30px;
+        }
+        
+        .search-input {
+            flex: 1;
+            height: 40px;
+            padding: 0 15px;
+            border: 2px solid #e31235;
+            border-right: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 14px;
+        }
+        
+        .search-button {
+            background-color: #e31235;
+            color: white;
+            border: none;
+            height: 40px;
+            padding: 0 20px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .nav-actions {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .cart,
+        .user-center {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        /* 主要内容区域 */
+        .main-content {
+            max-width: 1200px;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+            padding: 0 20px;
+        }
+        
+        /* 分类侧边栏 */
+        .category-sidebar {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .category-sidebar h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .category-list {
+            list-style: none;
+        }
+        
+        .category-list li {
+            margin-bottom: 10px;
+        }
+        
+        .category-list a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            display: block;
+            padding: 5px 0;
+            transition: color 0.3s;
+        }
+        
+        .category-list a:hover {
+            color: #e31235;
+        }
+        
+        /* 右侧内容 */
+        .right-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* 轮播图 */
+        .banner {
+            background-color: white;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .banner-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        .banner-slide {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .banner-slide.main-slide {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            position: relative;
+        }
+        
+        .banner-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            padding: 0 50px;
+        }
+        
+        .banner-text {
+            max-width: 300px;
+        }
+        
+        .banner-text h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .banner-text p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .banner-image img {
+            height: 250px;
+        }
+        
+        .banner-indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        
+        .indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+        
+        .indicator.active {
+            background-color: white;
+        }
+        
+        /* 快捷入口 */
+        .quick-entries {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .quick-entry {
+            text-align: center;
+        }
+        
+        .quick-entry img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+        
+        .quick-entry p {
+            font-size: 14px;
+            color: #333;
+        }
+        
+        /* 为你推荐 */
+        .recommendations {
+            background-color: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title::before {
+            content: "🔥";
+            margin-right: 10px;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+        
+        .product-card {
+            border: 1px solid #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .product-image {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fafafa;
+        }
+        
+        .product-image img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-title {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .product-price {
+            font-size: 18px;
+            color: #e31235;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .product-original-price {
+            font-size: 12px;
+            color: #999;
+            text-decoration: line-through;
+        }
+        
+        .product-discount {
+            font-size: 12px;
+            color: #e31235;
+            margin-top: 5px;
+        }
+        
+        /* 页脚 */
+        footer {
+            background-color: #2d3748;
+            color: white;
+            padding: 30px 0;
+            margin-top: 40px;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            padding: 0 20px;
+        }
+        
+        .footer-section h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-section a {
+            color: #a0aec0;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #4a5568;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-sidebar {
+                display: none;
+            }
+            
+            .product-grid,
+            .quick-entries {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-nav-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-bar {
+                width: 100%;
+                margin-right: 0;
+            }
+            
+            .product-grid,
+            .quick-entries {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .product-grid,
+            .quick-entries {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="top-nav">
+        <div class="top-nav-content">
+            <div class="top-nav-left">
+                <a href="#">首页</a>
+                <a href="#">商品分类</a>
+                <a href="#">品牌闪购</a>
+                <a href="#">京东超市</a>
+                <a href="#">京东国际</a>
+            </div>
+            <div class="top-nav-right">
+                <a href="#">客户服务</a>
+                <a href="#">联系我们</a>
+                <a href="#">手机京东</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主导航栏 -->
+    <div class="main-nav">
+        <div class="main-nav-content">
+            <div class="logo">京东热卖</div>
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="请输入搜索内容">
+                <button class="search-button">搜索</button>
+            </div>
+            <div class="nav-actions">
+                <div class="cart">
+                    <span>🛒</span>
+                    <span>购物车</span>
+                </div>
+                <div class="user-center">
+                    <span>👤</span>
+                    <span>我的京东</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主要内容区域 -->
+    <div class="main-content">
+        <!-- 分类侧边栏 -->
+        <div class="category-sidebar">
+            <h3>分类</h3>
+            <ul class="category-list">
+                <li><a href="#">🎮 游戏 / 电视 / 厨电大电</a></li>
+                <li><a href="#">💻 电脑 / 办公 / 文具用品</a></li>
+                <li><a href="#">📱 手机 / 运营商 / 数码</a></li>
+                <li><a href="#">🍔 食品酒水 / 厨房生鲜 / 个护健康</a></li>
+                <li><a href="#">🧴 生活电器 / 厨卫 / 空调 / 冰箱</a></li>
+                <li><a href="#">💄 美妆 / 个护清洁 / 宠物</a></li>
+                <li><a href="#">🔧 元器件 / 原材料 / 五金机电</a></li>
+                <li><a href="#">🏠 家装 / 建材 / 家具</a></li>
+                <li><a href="#">🍽️ 家居日用 / 厨具</a></li>
+                <li><a href="#">👕 男装 / 运动 / 户外</a></li>
+                <li><a href="#">👗 女装 / 女装 / 童装 / 内衣</a></li>
+            </ul>
+        </div>
+        
+        <!-- 右侧内容 -->
+        <div class="right-content">
+            <!-- 轮播图 -->
+            <div class="banner">
+                <div class="banner-container">
+                    <div class="banner-slide main-slide">
+                        <div class="banner-content">
+                            <div class="banner-text">
+                                <h2>潮流穿搭新势力</h2>
+                                <p>解锁时尚新趋势<br>潮服好价 新品折扣</p>
+                            </div>
+                            <div class="banner-image">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='250' viewBox='0 0 300 250'%3E%3Crect width='300' height='250' fill='%23fce4ec'/%3E%3Ctext x='50%25' y='50%25' font-size='20' text-anchor='middle' dy='0.3em' fill='%23e91e63'%3E潮流服饰展示%3C/text%3E%3C/svg%3E" alt="潮流穿搭">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="banner-indicators">
+                        <div class="indicator active"></div>
+                        <div class="indicator"></div>
+                        <div class="indicator"></div>
+                        <div class="indicator"></div>
+                        <div class="indicator"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 快捷入口 -->
+            <div class="quick-entries">
+                <div class="quick-entry">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23e8f5e8'/%3E%3Ctext x='50%25' y='50%25' font-size='30' text-anchor='middle' dy='0.3em' fill='%232e7d32'%3E📱%3C/text%3E%3C/svg%3E" alt="手机">
+                    <p>国家补贴<br>惠享正品</p>
+                </div>
+                <div class="quick-entry">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23fff3e0'/%3E%3Ctext x='50%25' y='50%25' font-size='30' text-anchor='middle' dy='0.3em' fill='%23ed8936'%3E💄%3C/text%3E%3C/svg%3E" alt="美妆">
+                    <p>精致美妆<br>品质之选</p>
+                </div>
+                <div class="quick-entry">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23e0f7fa'/%3E%3Ctext x='50%25' y='50%25' font-size='30' text-anchor='middle' dy='0.3em' fill='%2300acc1'%3E🧻%3C/text%3E%3C/svg%3E" alt="百货">
+                    <p>超值百货<br>省心省钱</p>
+                </div>
+                <div class="quick-entry">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23f3e5f5'/%3E%3Ctext x='50%25' y='50%25' font-size='30' text-anchor='middle' dy='0.3em' fill='%238e24aa'%3E🔧%3C/text%3E%3C/svg%3E" alt="五金">
+                    <p>品质五金<br>超值特惠</p>
+                </div>
+                <div class="quick-entry">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23fff8e1'/%3E%3Ctext x='50%25' y='50%25' font-size='30' text-anchor='middle' dy='0.3em' fill='%23f9a825'%3E🏠%3C/text%3E%3C/svg%3E" alt="家居">
+                    <p>品质家居<br>舒适生活</p>
+                </div>
+            </div>
+            
+            <!-- 为你推荐 -->
+            <div class="recommendations">
+                <h3 class="section-title">为你推荐</h3>
+                <div class="product-grid">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23f5f5f5'/%3E%3Ctext x='50%25' y='50%25' font-size='20' text-anchor='middle' dy='0.3em' fill='%23666'%3E商品图片%3C/text%3E%3C/svg%3E" alt="商品">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-title">浪鲸（SSWW）卫浴小户型陶瓷马桶 静音节水座便器</div>
+                            <div class="product-price">¥1299</div>
+                            <div class="product-original-price">¥1899</div>
+                            <div class="product-discount">3.0折特惠</div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23f5f5f5'/%3E%3Ctext x='50%25' y='50%25' font-size='20' text-anchor='middle' dy='0.3em' fill='%23666'%3E商品图片%3C/text%3E%3C/svg%3E" alt="商品">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-title">jnby by JNBY新江南布衣 女童秋冬新款连衣裙</div>
+                            <div class="product-price">¥399</div>
+                            <div class="product-original-price">¥599</div>
+                            <div class="product-discount">6.7折特惠</div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23f5f5f5'/%3E%3Ctext x='50%25' y='50%25' font-size='20' text-anchor='middle' dy='0.3em' fill='%23666'%3E商品图片%3C/text%3E%3C/svg%3E" alt="商品">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-title">新款男士摇粒绒外套加绒加厚保暖冬季上衣</div>
+                            <div class="product-price">¥199</div>
+                            <div class="product-original-price">¥399</div>
+                            <div class="product-discount">5.0折特惠</div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23f5f5f5'/%3E%3Ctext x='50%25' y='50%25' font-size='20' text-anchor='middle' dy='0.3em' fill='%23666'%3E商品图片%3C/text%3E%3C/svg%3E" alt="商品">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-title">JASONWOOD高端品牌羽绒服男中长款加厚保暖外套</div>
+                            <div class="product-price">¥599</div>
+                            <div class="product-original-price">¥1299</div>
+                            <div class="product-discount">4.6折特惠</div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23f5f5f5'/%3E%3Ctext x='50%25' y='50%25' font-size='20' text-anchor='middle' dy='0.3em' fill='%23666'%3E商品图片%3C/text%3E%3C/svg%3E" alt="商品">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-title">雅居乐家用平板开门现代经济简约衣柜</div>
+                            <div class="product-price">¥1880</div>
+                            <div class="product-original-price">¥2999</div>
+                            <div class="product-discount">6.3折特惠</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>客户服务</h3>
+                <ul>
+                    <li><a href="#">帮助中心</a></li>
+                    <li><a href="#">售后服务</a></li>
+                    <li><a href="#">意见反馈</a></li>
+                    <li><a href="#">投诉举报</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#">公司简介</a></li>
+                    <li><a href="#">联系我们</a></li>
+                    <li><a href="#">招聘信息</a></li>
+                    <li><a href="#">投资者关系</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>合作伙伴</h3>
+                <ul>
+                    <li><a href="#">京东金融</a></li>
+                    <li><a href="#">京东物流</a></li>
+                    <li><a href="#">京东云</a></li>
+                    <li><a href="#">京东健康</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>更多链接</h3>
+                <ul>
+                    <li><a href="#">京东国际</a></li>
+                    <li><a href="#">京东到家</a></li>
+                    <li><a href="#">京东生鲜</a></li>
+                    <li><a href="#">京东超市</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2025 京东热卖 版权所有 | 京ICP备12345678号 | 营业执照 | 网络文化经营许可证
+        </div>
+    </footer>
+    
+    <script>
+        // 轮播图切换功能
+        const indicators = document.querySelectorAll('.indicator');
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                indicators.forEach(i => i.classList.remove('active'));
+                indicator.classList.add('active');
+                // 这里可以添加轮播图切换逻辑
+            });
+        });
+        
+        // 模拟商品图片加载
+        document.querySelectorAll('.product-image img').forEach(img => {
+            img.addEventListener('error', function() {
+                this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180"%3E%3Crect width="180" height="180" fill="%23f5f5f5"/%3E%3Ctext x="50%25" y="50%25" font-size="20" text-anchor="middle" dy="0.3em" fill="%23666"%3E商品图片%3C/text%3E%3C/svg%3E';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品导入 - 电商微服务管理系统</title>
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* 容器样式 */
+        .container {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            grid-template-rows: 60px 1fr;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* 头部样式 */
+        .header {
+            grid-area: header;
+            background-color: #2d3748;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .welcome {
+            font-size: 14px;
+        }
+        
+        .btn-logout {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-logout:hover {
+            background-color: #c53030;
+        }
+        
+        /* 侧边栏样式 */
+        .sidebar {
+            grid-area: sidebar;
+            background-color: #2d3748;
+            color: white;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo-icon {
+            font-size: 30px;
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #e2e8f0;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .sidebar a:hover {
+            background-color: #4a5568;
+            color: white;
+        }
+        
+        .sidebar a.active {
+            background-color: #4299e1;
+            color: white;
+        }
+        
+        .sidebar i {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        
+        /* 主内容区域样式 */
+        .main {
+            grid-area: main;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f5f7fa;
+        }
+        
+        /* 操作栏样式 */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .action-bar h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #4299e1;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3182ce;
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        
+        /* 表单样式 */
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            max-width: 600px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2);
+        }
+        
+        .form-file {
+            padding: 10px;
+            border: 1px dashed #e2e8f0;
+            border-radius: 4px;
+            background-color: #f9fafb;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .form-file:hover {
+            border-color: #4299e1;
+            background-color: #ebf8ff;
+        }
+        
+        .form-file input[type="file"] {
+            display: none;
+        }
+        
+        .file-info {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        
+        /* 操作按钮组 */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* 图标样式 */
+        .icon {
+            margin-right: 5px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 60px auto 1fr;
+                grid-template-areas: 
+                    "header"
+                    "sidebar"
+                    "main";
+            }
+            
+            .sidebar {
+                padding: 10px 0;
+            }
+            
+            .sidebar ul {
+                display: flex;
+                overflow-x: auto;
+            }
+            
+            .sidebar li {
+                margin-right: 10px;
+                margin-bottom: 0;
+            }
+            
+            .sidebar a {
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题栏 -->
+        <header class="header">
+            <h1>电商管理系统</h1>
+            <div class="user-info">
+                <span class="welcome">欢迎，管理员</span>
+                <button class="btn-logout" onclick="logout()">退出登录</button>
+            </div>
+        </header>
+        
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🛒</div>
+                <div class="logo-text">电商管理系统</div>
+            </div>
+            <ul>
+                <li><a href="/index"><i class="icon-home"></i>首页</a></li>
+                <li><a href="/category/list"><i class="icon-category"></i>分类管理</a></li>
+                <li><a href="/product/list" class="active"><i class="icon-goods"></i>商品管理</a></li>
+                <li><a href="/spec/list"><i class="icon-spec"></i>规格配置</a></li>
+                <li><a href="/inventory/list"><i class="icon-inventory"></i>库存管理</a></li>
+                <li><a href="/order/list"><i class="icon-orders"></i>订单管理</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 主要内容区域 -->
+        <main class="main">
+            <div class="action-bar">
+                <h2>商品导入</h2>
+                <a href="/product/list" class="btn btn-secondary">返回商品列表</a>
+            </div>
+            
+            <div class="form-container">
+                <form th:action="@{/product/import}" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="form-label">选择导入文件</label>
+                        <div class="form-file">
+                            <input type="file" id="file" name="file" accept=".xls,.xlsx,.csv">
+                            <label for="file" class="btn btn-primary">点击选择文件</label>
+                            <div class="file-info" id="fileInfo">未选择文件</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">导入模式</label>
+                        <select class="form-input" name="importMode">
+                            <option value="insert">仅插入新数据</option>
+                            <option value="update">更新已有数据</option>
+                            <option value="insert_update">插入新数据并更新已有数据</option>
+                        </select>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">开始导入</button>
+                        <a href="/product/list" class="btn btn-secondary">取消</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // 退出登录功能
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                window.location.href = '/logout';
+            }
+        }
+        
+        // 文件选择监听
+        document.getElementById('file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('fileInfo').textContent = '已选择文件: ' + file.name;
+            } else {
+                document.getElementById('fileInfo').textContent = '未选择文件';
+            }
+        });
+    </script>
+</body>
+</html>

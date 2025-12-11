@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 电商管理系统</title>
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* 背景装饰 */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        /* 登录容器 */
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(0);
+            animation: fadeInUp 0.6s ease-out;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Logo */
+        .login-container .logo {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        /* 标题 */
+        .login-container h1 {
+            font-size: 28px;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        /* 副标题 */
+        .login-container .subtitle {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 40px;
+            letter-spacing: 0.5px;
+        }
+        
+        /* 错误信息 */
+        .error-message {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            color: #c53030;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            display: none;
+            border: 1px solid #fecaca;
+            transition: all 0.3s ease;
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+        
+        .error-message.show {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+            animation: slideInDown 0.3s ease;
+        }
+        
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* 表单组 */
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+            position: relative;
+        }
+        
+        /* 表单标签 */
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        /* 输入框容器 */
+        .input-container {
+            position: relative;
+        }
+        
+        /* 输入框 */
+        .form-group input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            color: #2d3748;
+            font-family: inherit;
+        }
+        
+        /* 输入框聚焦效果 */
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+        }
+        
+        /* 输入框图标 */
+        .input-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 18px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus + .input-icon {
+            color: #667eea;
+        }
+        
+        /* 登录按钮 */
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: inherit;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* 按钮悬停效果 */
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        }
+        
+        /* 按钮点击效果 */
+        .btn-login:active {
+            transform: translateY(-1px);
+        }
+        
+        /* 按钮波纹效果 */
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn-login:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        /* 登录类型选择器 */
+        .login-type-selector {
+            display: flex;
+            gap: 25px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        
+        /* 单选按钮容器 */
+        .radio-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        /* 自定义单选按钮 */
+        .radio-option input[type="radio"] {
+            display: none;
+        }
+        
+        /* 自定义单选按钮外观 */
+        .radio-option::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        /* 选中状态 */
+        .radio-option input[type="radio"]:checked + span::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            animation: scaleIn 0.3s ease;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* 悬停效果 */
+        .radio-option:hover {
+            color: #667eea;
+        }
+        
+        .radio-option:hover::before {
+            border-color: #667eea;
+            transform: scale(1.1);
+        }
+        
+        /* 注册链接 */
+        .register-link {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #718096;
+            transition: all 0.3s ease;
+        }
+        
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .register-link a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+        
+        .register-link a:hover {
+            color: #5a67d8;
+        }
+        
+        .register-link a:hover::after {
+            width: 100%;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 576px) {
+            .login-container {
+                margin: 0 20px;
+                padding: 40px 30px;
+                border-radius: 15px;
+            }
+            
+            .login-container h1 {
+                font-size: 24px;
+            }
+            
+            .login-container .logo {
+                font-size: 50px;
+            }
+            
+            .login-type-selector {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+        }
+        
+        /* 输入框动画 */
+        .form-group {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .form-group:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .form-group:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        
+        .form-group:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 按钮动画 */
+        .btn-login {
+            animation: fadeIn 0.5s ease-out 0.4s both;
+        }
+        
+        /* 注册链接动画 */
+        .register-link {
+            animation: fadeIn 0.5s ease-out 0.5s both;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">🛒</div>
+        <h1>电商管理系统</h1>
+        <p class="subtitle">基于Spring Cloud微服务架构</p>
+        
+        <div class="error-message" id="errorMessage">用户名或密码错误</div>
+        
+        <form id="loginForm" action="/login" method="post">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <div class="input-container">
+                    <input type="text" id="username" name="username" placeholder="请输入用户名" value="admin">
+                    <span class="input-icon">👤</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密码</label>
+                <div class="input-container">
+                    <input type="password" id="password" name="password" placeholder="请输入密码" value="admin123">
+                    <span class="input-icon">🔒</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>登录类型</label>
+                <div class="login-type-selector">
+                    <label class="radio-option">
+                        <input type="radio" name="userType" value="admin" checked>
+                        <span>管理员</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="userType" value="user">
+                        <span>普通用户</span>
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-login">登录</button>
+        </form>
+        
+        <p class="register-link">还没有账号？<a href="#">立即注册</a></p>
+    </div>
+    
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                e.preventDefault();
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = '用户名和密码不能为空';
+                errorMessage.classList.add('show');
+                
+                // 3秒后自动隐藏错误信息
+                setTimeout(() => {
+                    errorMessage.classList.remove('show');
+                }, 3000);
+            }
+        });
+        
+        // 检查URL参数中是否有错误信息
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('error')) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.classList.add('show');
+            
+            // 3秒后自动隐藏错误信息
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 输入框聚焦时移除错误信息
+        document.querySelectorAll('.form-group input').forEach(input => {
+            input.addEventListener('focus', () => {
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>

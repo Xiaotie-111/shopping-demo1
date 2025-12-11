@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品浏览 - 电商平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            background-color: #232f3e;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar .logo-icon {
+            margin-right: 0.5rem;
+        }
+        
+        .navbar .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .navbar .nav-links li {
+            margin-right: 1.5rem;
+        }
+        
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .navbar .nav-links a:hover {
+            color: #ff9900;
+        }
+        
+        .navbar .search-box {
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar .search-input {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 14px;
+            width: 300px;
+        }
+        
+        .navbar .btn-search {
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .navbar .btn-search:hover {
+            background-color: #ff6600;
+        }
+        
+        .navbar .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar .btn {
+            margin-left: 1rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .navbar .btn-primary {
+            background-color: #ff9900;
+            color: white;
+        }
+        
+        .navbar .btn-primary:hover {
+            background-color: #ff6600;
+        }
+        
+        .navbar .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+        }
+        
+        .navbar .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 主要内容区域 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        /* 欢迎信息 */
+        .welcome-section {
+            background-color: white;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .welcome-section h1 {
+            font-size: 2rem;
+            color: #232f3e;
+            margin-bottom: 1rem;
+        }
+        
+        /* 轮播容器 */
+        .carousel-container {
+            background-color: white;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+        
+        .carousel-title {
+            font-size: 1.5rem;
+            color: #232f3e;
+            margin-bottom: 1.5rem;
+        }
+        
+        .carousel {
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            gap: 2rem;
+        }
+        
+        .carousel-item {
+            min-width: 280px;
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .carousel-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .carousel-item .product-image {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1rem;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border-radius: 8px;
+        }
+        
+        .carousel-item .product-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #232f3e;
+        }
+        
+        .carousel-item .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #e53e3e;
+            margin: 1rem 0;
+        }
+        
+        .carousel-item .quantity-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+        
+        .quantity-selector button {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #e0e0e0;
+            background-color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .quantity-selector input {
+            width: 50px;
+            height: 30px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            border-left: none;
+            border-right: none;
+        }
+        
+        .carousel-item .btn-add-to-cart {
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        .carousel-item .btn-add-to-cart:hover {
+            background-color: #ff6600;
+        }
+        
+        /* 轮播控制按钮 */
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        .carousel-control.prev {
+            left: 10px;
+        }
+        
+        .carousel-control.next {
+            right: 10px;
+        }
+        
+        .carousel-control:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        /* 分类导航 */
+        .category-nav {
+            background-color: white;
+            padding: 1rem 2rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .category-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            justify-content: center;
+        }
+        
+        .category-nav a {
+            color: #666;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+        
+        .category-nav a:hover {
+            color: #ff9900;
+        }
+        
+        /* 商品列表 */
+        .product-section {
+            background-color: white;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .product-section h2 {
+            font-size: 1.5rem;
+            color: #232f3e;
+            margin-bottom: 1.5rem;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .product-card {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-card .product-image {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1rem;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border-radius: 8px;
+        }
+        
+        .product-card .product-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #232f3e;
+        }
+        
+        .product-card .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #e53e3e;
+            margin: 1rem 0;
+        }
+        
+        .product-card .product-sales {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .product-card .btn-add-to-cart {
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        /* 商品列表头部 */
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        /* 排序选项 */
+        .sort-options {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .sort-options label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .sort-options select {
+            padding: 0.3rem 0.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .product-card .btn-add-to-cart:hover {
+            background-color: #ff6600;
+        }
+        
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+            gap: 0.5rem;
+        }
+        
+        .pagination a {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .pagination a:hover {
+            background-color: #f7fafc;
+            color: #ff9900;
+            border-color: #ff9900;
+        }
+        
+        .pagination .active {
+            background-color: #ff9900;
+            color: white;
+            border-color: #ff9900;
+        }
+        
+        /* 页脚 */
+        .footer {
+            background-color: #232f3e;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar .nav-links {
+                display: none;
+            }
+            
+            .navbar .search-input {
+                width: 150px;
+            }
+            
+            .welcome-section h1 {
+                font-size: 1.5rem;
+            }
+            
+            .carousel-item {
+                min-width: 200px;
+                padding: 1rem;
+            }
+            
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">🛒</span>
+            <span>电商平台</span>
+        </div>
+        
+        <div class="nav-links">
+            <li><a href="/index">首页</a></li>
+            <li><a href="/product/browse" class="active">商品浏览</a></li>
+            <li><a href="/cart">购物车</a></li>
+            <li><a href="/favorite">收藏夹</a></li>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" id="keyword" placeholder="搜索商品" th:value="${keyword}">
+            <button class="btn-search" onclick="search()">搜索</button>
+        </div>
+        
+        <div class="user-actions">
+            <a href="/cart" class="btn btn-outline">购物车</a>
+            <a href="/favorite" class="btn btn-outline">收藏夹</a>
+            <a href="/login" class="btn btn-primary">登录</a>
+        </div>
+    </nav>
+    
+    <!-- 主要内容区域 -->
+    <div class="container">
+        <!-- 欢迎信息 -->
+        <section class="welcome-section">
+            <h1>🎉 欢迎访问网上购物商城！</h1>
+            <p>发现优质商品，享受便捷购物体验</p>
+        </section>
+        
+        <!-- 商品轮播 -->
+        <section class="carousel-container">
+            <h2 class="carousel-title">热门推荐</h2>
+            <div class="carousel">
+                <button class="carousel-control prev" onclick="moveCarousel(-1)">&lt;</button>
+                <div class="carousel-track" id="carouselTrack">
+                    <!-- 轮播商品项 -->
+                    <div class="carousel-item" th:each="product : ${products}" th:onclick="'window.location.href=\'/product/detail/' + ${product.id} + '\''">
+                        <div class="product-image">📱</div>
+                        <div class="product-name" th:text="${product.name}"></div>
+                        <div class="product-price">¥[[${#numbers.formatDecimal(product.price, 1, 2)}]]</div>
+                        <div class="quantity-selector">
+                            <button onclick="event.stopPropagation(); changeQuantity(${product.id}, -1)">-</button>
+                            <input type="number" id="quantity-${product.id}" value="1" min="1" max="99" readonly>
+                            <button onclick="event.stopPropagation(); changeQuantity(${product.id}, 1)">+</button>
+                        </div>
+                        <button class="btn-add-to-cart" th:onclick="'event.stopPropagation(); addToCart(' + ${product.id} + ')'">加入购物车</button>
+                    </div>
+                </div>
+                <button class="carousel-control next" onclick="moveCarousel(1)">&gt;</button>
+            </div>
+        </section>
+        
+        <!-- 商品列表 -->
+        <section class="product-section">
+            <div class="product-header">
+                <h2>商品列表</h2>
+                <div class="sort-options">
+                    <label for="sortBy">排序方式：</label>
+                    <select id="sortBy" onchange="sortProducts()">
+                        <option value="" th:selected="${sortBy == null || sortBy == ''}">默认排序</option>
+                        <option value="price" th:selected="${sortBy == 'price'}">价格</option>
+                        <option value="sales" th:selected="${sortBy == 'sales'}">销量</option>
+                        <option value="createTime" th:selected="${sortBy == 'createTime'}">上架时间</option>
+                    </select>
+                    <select id="sortOrder" onchange="sortProducts()">
+                        <option value="asc" th:selected="${sortOrder == 'asc'}">升序</option>
+                        <option value="desc" th:selected="${sortOrder == 'desc'}">降序</option>
+                    </select>
+                </div>
+            </div>
+            <div class="product-grid">
+                <div class="product-card" th:each="product : ${products}" th:onclick="'window.location.href=\'/product/detail/' + ${product.id} + '\''">
+                    <div class="product-image">📦</div>
+                    <div class="product-name" th:text="${product.name}"></div>
+                    <div class="product-price">¥[[${#numbers.formatDecimal(product.price, 1, 2)}]]</div>
+                    <div class="product-sales">销量: [[${product.sales}]]</div>
+                    <button class="btn-add-to-cart" th:onclick="'event.stopPropagation(); addToCart(' + ${product.id} + ')'">加入购物车</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 分页 -->
+        <div class="pagination">
+            <a href="/product/browse?page=${currentPage - 1}" th:unless="${currentPage == 1}">上一页</a>
+            <a href="/product/browse?page=1" th:classappend="${currentPage == 1 ? 'active' : ''}">1</a>
+            <a href="/product/browse?page=2" th:classappend="${currentPage == 2 ? 'active' : ''}">2</a>
+            <a href="/product/browse?page=3" th:classappend="${currentPage == 3 ? 'active' : ''}">3</a>
+            <a href="/product/browse?page=${currentPage + 1}" th:unless="${currentPage == totalPages}">下一页</a>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; 2025 电商平台. 保留所有权利.</p>
+    </footer>
+    
+    <script>
+        // 搜索功能
+        function search() {
+            const keyword = document.getElementById('keyword').value;
+            window.location.href = '/product/browse?keyword=' + encodeURIComponent(keyword);
+        }
+        
+        // 轮播功能
+        let currentIndex = 0;
+        const carouselTrack = document.getElementById('carouselTrack');
+        const carouselItems = carouselTrack.querySelectorAll('.carousel-item');
+        const itemsPerView = Math.floor(window.innerWidth / 300); // 计算每行显示的商品数量
+        const totalItems = carouselItems.length;
+        
+        function moveCarousel(direction) {
+            currentIndex += direction;
+            if (currentIndex < 0) currentIndex = 0;
+            if (currentIndex > totalItems - itemsPerView) currentIndex = Math.max(0, totalItems - itemsPerView);
+            
+            carouselTrack.style.transform = `translateX(-${currentIndex * 300}px)`;
+        }
+        
+        // 商品数量调整
+        function changeQuantity(productId, delta) {
+            const input = document.getElementById(`quantity-${productId}`);
+            let quantity = parseInt(input.value);
+            quantity += delta;
+            quantity = Math.max(1, Math.min(99, quantity));
+            input.value = quantity;
+        }
+        
+        // 加入购物车
+        function addToCart(productId) {
+            const quantity = document.getElementById(`quantity-${productId}`)?.value || 1;
+            alert(`商品已加入购物车！数量：${quantity}`);
+        }
+        
+        // 商品排序
+        function sortProducts() {
+            const sortBy = document.getElementById('sortBy').value;
+            const sortOrder = document.getElementById('sortOrder').value;
+            const keyword = document.getElementById('keyword')?.value || '';
+            
+            // 构建URL参数
+            let url = '/?sortBy=' + sortBy + '&sortOrder=' + sortOrder;
+            if (keyword) {
+                url += '&keyword=' + encodeURIComponent(keyword);
+            }
+            
+            // 跳转页面
+            window.location.href = url;
+        }
+        
+        // 初始化轮播
+        window.addEventListener('load', function() {
+            carouselTrack.style.transform = `translateX(0px)`;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            grid-template-rows: 60px 1fr;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            height: 100vh;
+        }
+        
+        /* 顶部标题栏 */
+        .header {
+            grid-area: header;
+            background-color: #4a5568;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+        }
+        
+        .header .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header .welcome {
+            margin-right: 20px;
+            font-size: 14px;
+        }
+        
+        .header .btn-logout {
+            background-color: #718096;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .header .btn-logout:hover {
+            background-color: #4a5568;
+        }
+        
+        /* 左侧导航栏 */
+        .sidebar {
+            grid-area: sidebar;
+            background-color: #2d3748;
+            color: white;
+            padding: 20px 0;
+        }
+        
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid #4a5568;
+            margin-bottom: 20px;
+        }
+        
+        .sidebar .logo-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        .sidebar .logo-text {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .sidebar a:hover {
+            background-color: #4a5568;
+        }
+        
+        .sidebar a.active {
+            background-color: #4299e1;
+        }
+        
+        .sidebar a i {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        
+        /* 主要内容区域 */
+        .main {
+            grid-area: main;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .main h2 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        /* 操作栏 */
+        .action-bar {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .action-bar .search-box {
+            display: flex;
+            align-items: center;
+        }
+        
+        .action-bar .search-input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 14px;
+            width: 200px;
+        }
+        
+        .action-bar .btn-search {
+            background-color: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .action-bar .btn-add {
+            background-color: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .action-bar .btn-add:hover {
+            background-color: #5a6fd8;
+        }
+        
+        /* 表格样式 */
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table-container th,
+        .table-container td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        
+        .table-container th {
+            background-color: #fafbfc;
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .table-container td {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* 状态标签 */
+        .status {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .status.enabled {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .status.disabled {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-edit {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .btn-edit:hover {
+            background-color: #bbdefb;
+        }
+        
+        .btn-delete {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .btn-delete:hover {
+            background-color: #ffcdd2;
+        }
+        
+        .btn-shelf {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .btn-shelf:hover {
+            background-color: #ffe0b2;
+        }
+        
+        /* 复选框样式 */
+        .checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .pagination a {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .pagination a:hover {
+            background-color: #f5f7fa;
+            color: #667eea;
+            border-color: #667eea;
+        }
+        
+        .pagination .active {
+            background-color: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        /* 模拟图标 */
+        .icon-category::before { content: "📁"; }
+        .icon-goods::before { content: "📦"; }
+        .icon-spec::before { content: "⚙️"; }
+        .icon-inventory::before { content: "📊"; }
+        .icon-orders::before { content: "📋"; }
+        .icon-home::before { content: "🏠"; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题栏 -->
+        <header class="header">
+            <h1>电商管理系统</h1>
+            <div class="user-info">
+                <span class="welcome">欢迎，管理员</span>
+                <button class="btn-logout" onclick="logout()">退出登录</button>
+            </div>
+        </header>
+        
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🛒</div>
+                <div class="logo-text">电商管理系统</div>
+            </div>
+            <ul>
+                <li><a href="/index"><i class="icon-home"></i>首页</a></li>
+                <li><a href="/category/list"><i class="icon-category"></i>分类管理</a></li>
+                <li><a href="/product/list" class="active"><i class="icon-goods"></i>商品管理</a></li>
+                <li><a href="/spec/list"><i class="icon-spec"></i>规格配置</a></li>
+                <li><a href="/inventory/list"><i class="icon-inventory"></i>库存管理</a></li>
+                <li><a href="/order/list"><i class="icon-orders"></i>订单管理</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 主要内容区域 -->
+        <main class="main">
+            <h2>商品管理</h2>
+            
+            <!-- 操作栏 -->
+            <div class="action-bar">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="keyword" placeholder="请输入商品名称或编码">
+                    <button class="btn-search" onclick="searchProduct()">搜索</button>
+                </div>
+                <div>
+                    <button class="btn-add" onclick="addProduct()">添加商品</button>
+                    <button class="btn-add" onclick="batchImport()">批量导入</button>
+                    <button class="btn-add" onclick="batchExport()">批量导出</button>
+                </div>
+            </div>
+            
+            <!-- 表格容器 -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" class="checkbox" id="selectAll"></th>
+                            <th>商品ID</th>
+                            <th>商品名称</th>
+                            <th>商品编码</th>
+                            <th>分类</th>
+                            <th>品牌</th>
+                            <th>价格</th>
+                            <th>库存</th>
+                            <th>销量</th>
+                            <th>状态</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="product : ${products}">
+                            <td><input type="checkbox" class="checkbox" name="productIds" th:value="${product.id}"></td>
+                            <td th:text="${product.id}"></td>
+                            <td th:text="${product.name}"></td>
+                            <td th:text="${product.code}"></td>
+                            <td th:text="${product.categoryName}"></td>
+                            <td th:text="${product.brand}"></td>
+                            <td th:text="${product.price}"></td>
+                            <td th:text="${product.stock}"></td>
+                            <td th:text="${product.sales}"></td>
+                            <td>
+                                <span class="status enabled" th:if="${product.status == 1}">上架</span>
+                                <span class="status disabled" th:if="${product.status == 0}">下架</span>
+                            </td>
+                            <td th:text="${#dates.format(product.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td>
+                                <button class="btn btn-edit" th:onclick="'editProduct(' + ${product.id} + ')'">编辑</button>
+                                <button class="btn btn-delete" th:onclick="'deleteProduct(' + ${product.id} + ')'">删除</button>
+                                <button class="btn btn-shelf" th:onclick="'shelfProduct(' + ${product.id} + ', ' + (${product.status} == 1 ? 0 : 1) + ')'" th:text="${product.status == 1 ? '下架' : '上架'}"></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- 分页 -->
+            <div class="pagination">
+                <a th:href="@{/product/list(page=${currentPage - 1})}" th:unless="${currentPage == 1}">上一页</a>
+                <a th:href="@{/product/list(page=1)}" th:classappend="${currentPage == 1 ? 'active' : ''}">1</a>
+                <a th:href="@{/product/list(page=2)}" th:classappend="${currentPage == 2 ? 'active' : ''}">2</a>
+                <a th:href="@{/product/list(page=3)}" th:classappend="${currentPage == 3 ? 'active' : ''}">3</a>
+                <a th:href="@{/product/list(page=${currentPage + 1})}" th:unless="${currentPage == totalPages}">下一页</a>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // 退出登录功能
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                window.location.href = '/logout';
+            }
+        }
+        
+        // 添加商品
+        function addProduct() {
+            window.location.href = '/product/add';
+        }
+        
+        // 编辑商品
+        function editProduct(id) {
+            window.location.href = '/product/edit/' + id;
+        }
+        
+        // 删除商品
+        function deleteProduct(id) {
+            if (confirm('确定要删除这个商品吗？')) {
+                window.location.href = '/product/delete/' + id;
+            }
+        }
+        
+        // 商品上下架
+        function shelfProduct(id, isShelf) {
+            window.location.href = '/product/shelf/' + id + '/' + isShelf;
+        }
+        
+        // 搜索商品
+        function searchProduct() {
+            const keyword = document.getElementById('keyword').value;
+            window.location.href = '/product/search?keyword=' + encodeURIComponent(keyword);
+        }
+        
+        // 批量导入
+        function batchImport() {
+            window.location.href = '/product/import';
+        }
+        
+        // 批量导出
+        function batchExport() {
+            window.location.href = '/product/export';
+        }
+        
+        // 全选/取消全选
+        document.getElementById('selectAll').addEventListener('click', function() {
+            var checkboxes = document.querySelectorAll('input[name="productIds"]');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = this.checked;
+            }
+        });
+    </script>
+</body>
+</html>

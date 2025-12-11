@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加库存</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            grid-template-rows: 60px 1fr;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            height: 100vh;
+        }
+        
+        /* 顶部标题栏 */
+        .header {
+            grid-area: header;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .header .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header .welcome {
+            margin-right: 20px;
+            font-size: 14px;
+        }
+        
+        .header .btn-logout {
+            background-color: #f0f2f5;
+            color: #666;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .header .btn-logout:hover {
+            background-color: #e4e6eb;
+        }
+        
+        /* 左侧导航栏 */
+        .sidebar {
+            grid-area: sidebar;
+            background-color: white;
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+            padding: 20px 0;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar a:hover {
+            background-color: #f5f7fa;
+            color: #667eea;
+        }
+        
+        .sidebar a.active {
+            background-color: #f0f2f5;
+            color: #667eea;
+            border-left-color: #667eea;
+        }
+        
+        /* 主要内容区域 */
+        .main {
+            grid-area: main;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .main h2 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        /* 表单容器 */
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+        
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .form-group label {
+            display: inline-block;
+            width: 120px;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+            margin-right: 20px;
+            text-align: right;
+            padding-top: 8px;
+        }
+        
+        .form-group .form-control {
+            flex: 1;
+            max-width: 500px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            height: 100px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+        
+        /* 操作按钮 */
+        .form-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f2f5;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 15px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #5a6fd8;
+        }
+        
+        .btn-cancel {
+            background-color: #f0f2f5;
+            color: #666;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #e4e6eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题栏 -->
+        <header class="header">
+            <h1>电商管理系统</h1>
+            <div class="user-info">
+                <span class="welcome">欢迎，管理员</span>
+                <button class="btn-logout" onclick="logout()">退出登录</button>
+            </div>
+        </header>
+        
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar">
+            <ul>
+                <li><a href="/index"><i class="icon-home"></i>首页</a></li>
+                <li><a href="/category/list"><i class="icon-category"></i>分类管理</a></li>
+                <li><a href="/product/list"><i class="icon-goods"></i>商品管理</a></li>
+                <li><a href="/spec/list"><i class="icon-spec"></i>规格配置</a></li>
+                <li><a href="/inventory/list" class="active"><i class="icon-inventory"></i>库存管理</a></li>
+                <li><a href="/order/list"><i class="icon-orders"></i>订单管理</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 主要内容区域 -->
+        <main class="main">
+            <h2>添加库存</h2>
+            
+            <!-- 表单容器 -->
+            <div class="form-container">
+                <form th:action="@{/inventory/add}" method="post">
+                    <div class="form-group">
+                        <label for="productId">商品ID：</label>
+                        <div class="form-control">
+                            <input type="number" id="productId" name="productId" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productName">商品名称：</label>
+                        <div class="form-control">
+                            <input type="text" id="productName" name="productName" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="currentStock">当前库存：</label>
+                        <div class="form-control">
+                            <input type="number" id="currentStock" name="currentStock" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lockedStock">锁定库存：</label>
+                        <div class="form-control">
+                            <input type="number" id="lockedStock" name="lockedStock" value="0" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="minThreshold">最低阈值：</label>
+                        <div class="form-control">
+                            <input type="number" id="minThreshold" name="minThreshold" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="maxThreshold">最高阈值：</label>
+                        <div class="form-control">
+                            <input type="number" id="maxThreshold" name="maxThreshold" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="status">状态：</label>
+                        <div class="form-control">
+                            <select id="status" name="status" required>
+                                <option value="1">正常</option>
+                                <option value="0">禁用</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">保存</button>
+                        <button type="button" class="btn btn-cancel" onclick="goBack()">取消</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // 退出登录功能
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                window.location.href = '/logout';
+            }
+        }
+        
+        // 返回库存列表
+        function goBack() {
+            window.location.href = '/inventory/list';
+        }
+    </script>
+</body>
+</html>
