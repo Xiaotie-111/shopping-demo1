@@ -191,8 +191,8 @@
         }
         
         .carousel-item .product-image {
-            width: 150px;
-            height: 150px;
+            width: 200px;
+            height: 200px;
             margin: 0 auto 1rem;
             background-color: #f0f0f0;
             display: flex;
@@ -200,6 +200,7 @@
             justify-content: center;
             font-size: 3rem;
             border-radius: 8px;
+            overflow: hidden;
         }
         
         .carousel-item .product-name {
@@ -352,8 +353,8 @@
         }
         
         .product-card .product-image {
-            width: 150px;
-            height: 150px;
+            width: 200px;
+            height: 200px;
             margin: 0 auto 1rem;
             background-color: #f0f0f0;
             display: flex;
@@ -361,6 +362,7 @@
             justify-content: center;
             font-size: 3rem;
             border-radius: 8px;
+            overflow: hidden;
         }
         
         .product-card .product-name {
@@ -538,7 +540,9 @@
                 <div class="carousel-track" id="carouselTrack">
                     <!-- 轮播商品项 -->
                     <div class="carousel-item" th:each="product : ${products}" th:onclick="'window.location.href=\'/product/detail/' + ${product.id} + '\''">
-                        <div class="product-image">📱</div>
+                        <div class="product-image">
+                            <img th:src="${product.imageUrl}" th:alt="${product.name}" style="width: 100%; height: 100%; border-radius: 8px;">
+                        </div>
                         <div class="product-name" th:text="${product.name}"></div>
                         <div class="product-price">¥[[${#numbers.formatDecimal(product.price, 1, 2)}]]</div>
                         <div class="quantity-selector">
@@ -572,14 +576,16 @@
                 </div>
             </div>
             <div class="product-grid">
-                <div class="product-card" th:each="product : ${products}" th:onclick="'window.location.href=\'/product/detail/' + ${product.id} + '\''">
-                    <div class="product-image">📦</div>
-                    <div class="product-name" th:text="${product.name}"></div>
-                    <div class="product-price">¥[[${#numbers.formatDecimal(product.price, 1, 2)}]]</div>
-                    <div class="product-sales">销量: [[${product.sales}]]</div>
-                    <button class="btn-add-to-cart" th:onclick="'event.stopPropagation(); addToCart(' + ${product.id} + ')'">加入购物车</button>
+                    <div class="product-card" th:each="product : ${products}" th:onclick="'window.location.href=\'/product/detail/' + ${product.id} + '\''">
+                        <div class="product-image">
+                            <img th:src="${product.imageUrl}" th:alt="${product.name}" style="width: 100%; height: 100%; border-radius: 8px;">
+                        </div>
+                        <div class="product-name" th:text="${product.name}"></div>
+                        <div class="product-price">¥[[${#numbers.formatDecimal(product.price, 1, 2)}]]</div>
+                        <div class="product-sales">销量: [[${product.sales}]]</div>
+                        <button class="btn-add-to-cart" th:onclick="'event.stopPropagation(); addToCart(' + ${product.id} + ')'">加入购物车</button>
+                    </div>
                 </div>
-            </div>
         </section>
         
         <!-- 分页 -->

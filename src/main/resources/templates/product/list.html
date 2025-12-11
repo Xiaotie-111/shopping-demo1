@@ -403,9 +403,9 @@
                             </td>
                             <td th:text="${#dates.format(product.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
                             <td>
-                                <button class="btn btn-edit" th:onclick="'editProduct(' + ${product.id} + ')'">编辑</button>
-                                <button class="btn btn-delete" th:onclick="'deleteProduct(' + ${product.id} + ')'">删除</button>
-                                <button class="btn btn-shelf" th:onclick="'shelfProduct(' + ${product.id} + ', ' + (${product.status} == 1 ? 0 : 1) + ')'" th:text="${product.status == 1 ? '下架' : '上架'}"></button>
+                                <a class="btn btn-edit" th:href="|/product/edit/${product.id}|">编辑</a>
+                                <a class="btn btn-delete" th:href="|/product/delete/${product.id}|">删除</a>
+                                <a class="btn btn-shelf" th:href="|/product/shelf/${product.id}/${product.status == 1 ? 0 : 1}|" th:text="${product.status == 1 ? '下架' : '上架'}"></a>
                             </td>
                         </tr>
                     </tbody>

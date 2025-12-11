@@ -156,12 +156,13 @@ public class ProductController {
     /**
      * 处理商品上下架请求
      * @param id 商品ID
-     * @param isShelf 是否上架
+     * @param isShelf 是否上架（1=上架，0=下架）
      * @return 重定向到商品列表页面
      */
     @GetMapping("/shelf/{id}/{isShelf}")
-    public String shelfProduct(@PathVariable Long id, @PathVariable boolean isShelf) {
-        productService.shelfProduct(id, isShelf);
+    public String shelfProduct(@PathVariable Long id, @PathVariable Integer isShelf) {
+        boolean shelfStatus = isShelf != null && isShelf == 1;
+        productService.shelfProduct(id, shelfStatus);
         return "redirect:/product/list";
     }
     
@@ -250,5 +251,21 @@ public class ProductController {
         // 输出文件
         workbook.write(response.getOutputStream());
         workbook.close();
+    }
+    
+    /**
+     * 处理立即购买请求
+     * @param id 商品ID
+     * @param model 模型对象
+     * @return 订单确认页面视图
+     */
+    @GetMapping("/buy-now/{id}")
+    public String buyNow(@PathVariable Long id, Model model) {
+        // 获取商品详情
+        Product product = productService.getById(id);
+        model.addAttribute("product", product);
+        
+        // 返回订单确认页面
+        return "order/confirm";
     }
 }

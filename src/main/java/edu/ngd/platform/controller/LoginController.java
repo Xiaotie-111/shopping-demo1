@@ -71,17 +71,11 @@ public class LoginController {
     
     /**
      * 跳转到主页面
-     * @param session HTTP会话
      * @return 主页面视图
      */
     @GetMapping("/index")
-    public String index(HttpSession session) {
-        // 检查用户是否已登录
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            // 未登录，跳转到登录页面
-            return "redirect:/login";
-        }
+    public String index() {
+        // 允许直接访问首页，不检查登录状态
         return "index";
     }
     
