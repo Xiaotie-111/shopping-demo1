@@ -405,8 +405,10 @@
                     <table>
                         <thead>
                             <tr>
+                                <th>商品图片</th>
                                 <th>商品ID</th>
                                 <th>商品名称</th>
+                                <th>品牌</th>
                                 <th>商品编码</th>
                                 <th>单价</th>
                                 <th>数量</th>
@@ -415,8 +417,13 @@
                         </thead>
                         <tbody>
                             <tr th:each="item : ${order.orderItems}">
+                                <td>
+                                    <img th:src="${item.imageUrl}" th:if="${item.imageUrl != null and item.imageUrl != ''}" width="80" height="80" style="object-fit: cover; border-radius: 4px;">
+                                    <span th:unless="${item.imageUrl != null and item.imageUrl != ''}">📦</span>
+                                </td>
                                 <td th:text="${item.productId}"></td>
                                 <td th:text="${item.productName}"></td>
+                                <td th:text="${item.productBrand}"></td>
                                 <td th:text="${item.productCode}"></td>
                                 <td th:text="${item.price}"></td>
                                 <td th:text="${item.quantity}"></td>

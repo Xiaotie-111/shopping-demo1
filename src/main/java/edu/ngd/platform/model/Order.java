@@ -1,5 +1,6 @@
 package edu.ngd.platform.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.util.Date;
 import java.util.List;
@@ -7,27 +8,40 @@ import java.util.List;
 /**
  * 订单实体类
  */
-@TableName("orders")
+@TableName("`order`")
 public class Order {
     private Long id;
     private String orderNo;
     private Long userId;
+    @TableField(exist = false)
     private String userName;
     private Double totalAmount;
+    @TableField(exist = false)
     private Double actualAmount;
     private Integer status;
+    @TableField(exist = false)
     private Integer paymentMethod;
+    @TableField(exist = false)
     private String paymentNo;
+    @TableField(exist = false)
     private Date paymentTime;
+    @TableField(exist = false)
     private Integer shippingMethod;
+    @TableField(exist = false)
     private String shippingAddress;
+    @TableField(exist = false)
     private Date shippingTime;
+    @TableField(exist = false)
     private Date receiveTime;
+    @TableField(exist = false)
     private String remark;
     private Date createTime;
     private Date updateTime;
+    @TableField(exist = false)
     private String createBy;
+    @TableField(exist = false)
     private String updateBy;
+    @TableField(exist = false)
     private List<OrderItem> orderItems;
     
     // getter和setter方法

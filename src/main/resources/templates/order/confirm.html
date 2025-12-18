@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>订单确认 - 电商平台</title>
+    <title>支付成功</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,7 @@
         
         /* 顶部导航栏 */
         .navbar {
-            background-color: #2d3748;
+            background-color: #232f3e;
             color: white;
             padding: 1rem 2rem;
             display: flex;
@@ -51,39 +51,17 @@
         .navbar .nav-links a {
             color: white;
             text-decoration: none;
+            font-size: 14px;
             transition: color 0.3s;
         }
         
         .navbar .nav-links a:hover {
-            color: #667eea;
+            color: #ff9900;
         }
         
-        .navbar .search-box {
-            display: flex;
-            align-items: center;
-        }
-        
-        .navbar .search-input {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px 0 0 4px;
-            font-size: 14px;
-            width: 250px;
-        }
-        
-        .navbar .btn-search {
-            background-color: #667eea;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0 4px 4px 0;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-        
-        .navbar .btn-search:hover {
-            background-color: #5a6fd8;
+        .navbar .nav-links a.active {
+            color: #ff9900;
+            font-weight: bold;
         }
         
         .navbar .user-actions {
@@ -92,30 +70,28 @@
         }
         
         .navbar .btn {
-            margin-left: 1rem;
             padding: 0.5rem 1rem;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
-            transition: background-color 0.3s;
-            text-decoration: none;
-            display: inline-block;
+            transition: all 0.3s;
         }
         
         .navbar .btn-primary {
-            background-color: #667eea;
+            background-color: #ff9900;
             color: white;
         }
         
         .navbar .btn-primary:hover {
-            background-color: #5a6fd8;
+            background-color: #ff6600;
         }
         
         .navbar .btn-outline {
             background-color: transparent;
             color: white;
             border: 1px solid white;
+            margin-right: 0.5rem;
         }
         
         .navbar .btn-outline:hover {
@@ -124,224 +100,72 @@
         
         /* 主要内容区域 */
         .container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 2rem auto;
             padding: 0 1rem;
         }
         
-        .container h1 {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            color: #333;
-        }
-        
-        /* 订单确认容器 */
-        .order-confirm {
+        /* 成功提示区域 */
+        .success-container {
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            padding: 2rem;
-        }
-        
-        /* 订单信息卡片 */
-        .order-card {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .order-card h3 {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-        
-        /* 商品信息 */
-        .product-info {
-            display: grid;
-            grid-template-columns: 120px 1fr 100px 100px;
-            gap: 1rem;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        
-        .product-image {
-            width: 100%;
-            height: 100px;
-            object-fit: contain;
-            border-radius: 4px;
-            background-color: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-        }
-        
-        .product-details {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .product-name {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .product-brand {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .product-price {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #e53e3e;
-        }
-        
-        .product-quantity {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .quantity-input {
-            width: 60px;
-            padding: 4px 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
             text-align: center;
         }
         
-        /* 收货地址 */
-        .address-section {
-            margin-bottom: 2rem;
+        /* 成功图标 */
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
         }
         
-        .address-section h3 {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
+        /* 成功标题 */
+        .success-title {
+            font-size: 2rem;
             color: #333;
+            margin-bottom: 1rem;
         }
         
-        .address-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .form-group label {
-            font-size: 0.9rem;
+        /* 成功消息 */
+        .success-message {
+            font-size: 1.2rem;
             color: #666;
-        }
-        
-        .form-group input, .form-group textarea {
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        
-        /* 订单金额 */
-        .order-amount {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 1.5rem;
             margin-bottom: 2rem;
         }
         
-        .amount-row {
+        /* 操作按钮 */
+        .action-buttons {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-        
-        .amount-row.final {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e2e8f0;
-            color: #e53e3e;
-        }
-        
-        /* 提交按钮 */
-        .submit-section {
-            display: flex;
-            justify-content: flex-end;
             gap: 1rem;
+            justify-content: center;
         }
         
         .btn {
-            padding: 0.75rem 2rem;
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
+            font-size: 14px;
             transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
         }
         
         .btn-primary {
-            background-color: #667eea;
+            background-color: #ff9900;
             color: white;
         }
         
         .btn-primary:hover {
-            background-color: #5a6fd8;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            background-color: #ff6600;
         }
         
         .btn-secondary {
-            background-color: #f7fafc;
+            background-color: #f0f2f5;
             color: #666;
-            border: 1px solid #e2e8f0;
         }
         
         .btn-secondary:hover {
-            background-color: #edf2f7;
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .product-info {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .address-form {
-                grid-template-columns: 1fr;
-            }
-            
-            .submit-section {
-                flex-direction: column;
-            }
-            
-            .navbar .nav-links {
-                display: none;
-            }
-            
-            .navbar .search-input {
-                width: 150px;
-            }
+            background-color: #e4e6eb;
         }
     </style>
 </head>
@@ -350,149 +174,148 @@
     <nav class="navbar">
         <div class="logo">
             <span class="logo-icon">🛒</span>
-            <span>电商平台</span>
+            <span>电商管理系统</span>
         </div>
-        
-        <div class="nav-links">
-            <li><a href="/index">首页</a></li>
-            <li><a href="/product/browse">商品浏览</a></li>
-            <li><a href="/cart">购物车</a></li>
-            <li><a href="/favorite">收藏夹</a></li>
-        </div>
-        
-        <div class="search-box">
-            <input type="text" class="search-input" id="keyword" placeholder="搜索商品">
-            <button class="btn-search" onclick="search()">搜索</button>
-        </div>
-        
+        <ul class="nav-links">
+            <li><a href="/" >首页</a></li>
+            <li><a href="/product/list">商品分类</a></li>
+            <li><a href="/product/browse">热销</a></li>
+            <li><a href="/product/browse">新品</a></li>
+            <li><a href="/order/list" class="active">我的订单</a></li>
+            <li><a href="/user/center">个人中心</a></li>
+            <li><a href="/logout">退出</a></li>
+        </ul>
         <div class="user-actions">
-            <a href="/cart" class="btn btn-outline">购物车</a>
-            <a href="/favorite" class="btn btn-outline">收藏夹</a>
-            <a href="/login" class="btn btn-primary">登录</a>
+            <a href="/cart" class="btn btn-outline">
+                购物车
+            </a>
         </div>
     </nav>
     
     <!-- 主要内容区域 -->
     <div class="container">
-        <h1>订单确认</h1>
-        
-        <div class="order-confirm">
-            <!-- 商品信息 -->
-            <div class="order-card">
-                <h3>商品信息</h3>
-                <div class="product-info">
-                    <div class="product-image">
-                        <img th:src="${product.imageUrl}" th:alt="${product.name}" style="width: 100%; height: 100%;">
-                    </div>
-                    <div class="product-details">
-                        <div class="product-name" th:text="${product.name}"></div>","}}}
-                        <div class="product-brand" th:text="${product.brand}"></div>
-                    </div>
-                    <div class="product-price">¥[[${#numbers.formatDecimal(product.price, 1, 2)}]]</div>
-                    <div class="product-quantity">
-                        <label>数量：</label>
-                        <input type="number" class="quantity-input" id="quantity" value="1" min="1" max="99">
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 收货地址 -->
-            <div class="order-card">
-                <h3>收货信息</h3>
-                <form id="orderForm" action="/order/submit" method="post">
-                    <div class="address-form">
-                        <input type="hidden" name="productId" th:value="${product.id}">
-                        <input type="hidden" name="productName" th:value="${product.name}">
-                        <input type="hidden" name="productPrice" th:value="${product.price}">
-                        <input type="hidden" name="totalAmount" id="totalAmount" th:value="${product.price}">
-                        
-                        <div class="form-group">
-                            <label for="consignee">收货人</label>
-                            <input type="text" id="consignee" name="consignee" placeholder="请输入收货人姓名" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="phone">联系电话</label>
-                            <input type="tel" id="phone" name="phone" placeholder="请输入联系电话" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="address">收货地址</label>
-                            <textarea id="address" name="address" placeholder="请输入详细收货地址" required></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="paymentMethod">支付方式</label>
-                            <select id="paymentMethod" name="paymentMethod" required>
-                                <option value="1">支付宝</option>
-                                <option value="2">微信支付</option>
-                                <option value="3">银行卡支付</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- 订单金额 -->
-                    <div class="order-amount">
-                        <div class="amount-row">
-                            <span>商品总价</span>
-                            <span th:text="|¥${#numbers.formatDecimal(product.price, 1, 2)}|"></span>
-                        </div>
-                        <div class="amount-row">
-                            <span>运费</span>
-                            <span>¥0.00</span>
-                        </div>
-                        <div class="amount-row final">
-                            <span>订单总价</span>
-                            <span id="finalAmount" th:text="|¥${#numbers.formatDecimal(product.price, 1, 2)}|"></span>
-                        </div>
-                    </div>
-                    
-                    <!-- 提交按钮 -->
-                    <div class="submit-section">
-                        <a href="/product/detail/" class="btn btn-secondary" th:href="|/product/detail/${product.id}|">返回详情</a>
-                        <button type="submit" class="btn btn-primary">提交订单</button>
-                    </div>
-                </form>
+        <div class="success-container">
+            <div class="success-icon">✅</div>
+            <h1 class="success-title">订单支付成功</h1>
+            <p class="success-message">感谢您的购买，您的订单已经成功支付！</p>
+            <div class="action-buttons">
+                <a href="/order/list" class="btn btn-primary">查看我的订单</a>
+                <a href="/" class="btn btn-secondary">返回首页</a>
             </div>
         </div>
     </div>
     
-    <script>
-        // 搜索功能
-        function search() {
-            const keyword = document.getElementById('keyword').value;
-            window.location.href = '/product/browse?keyword=' + encodeURIComponent(keyword);
+    <!-- 成功弹窗 -->
+    <div id="successModal" class="modal" style="display: block;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>支付成功</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>您的订单已经成功支付！</p>
+                <p>可在"我的订单"中查看订单详情。</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="viewOrders()">查看我的订单</button>
+                <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        /* 弹窗样式 */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
-        // 更新订单金额
-        document.getElementById('quantity').addEventListener('change', function() {
-            const quantity = parseInt(this.value);
-            const price = parseFloat(document.getElementById('totalAmount').value);
-            const totalAmount = quantity * price;
-            document.getElementById('totalAmount').value = totalAmount;
-            document.getElementById('finalAmount').textContent = '¥' + totalAmount.toFixed(2);
-        });
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            width: 400px;
+            max-width: 90%;
+            animation: modalSlideIn 0.3s ease-out;
+        }
         
-        // 表单提交前验证
-        document.getElementById('orderForm').addEventListener('submit', function(e) {
-            const consignee = document.getElementById('consignee').value;
-            const phone = document.getElementById('phone').value;
-            const address = document.getElementById('address').value;
-            
-            if (!consignee || !phone || !address) {
-                alert('请填写完整的收货信息');
-                e.preventDefault();
-                return;
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
             }
-            
-            // 验证手机号格式
-            const phoneRegex = /^1[3-9]\d{9}$/;
-            if (!phoneRegex.test(phone)) {
-                alert('请输入正确的手机号');
-                e.preventDefault();
-                return;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
-        });
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.25rem;
+        }
+        
+        .close {
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+        
+        .close:hover {
+            color: #333;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            text-align: center;
+            color: #666;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+    </style>
+    
+    <script>
+        // 弹窗功能
+        function viewOrders() {
+            window.location.href = '/order/list';
+        }
+        
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+        
+        // 点击弹窗外部关闭弹窗
+        window.onclick = function(event) {
+            const modal = document.getElementById('successModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>

@@ -1,7 +1,9 @@
 package edu.ngd.platform.controller;
 
+import edu.ngd.platform.model.Cart;
 import edu.ngd.platform.model.Product;
 import edu.ngd.platform.model.User;
+import edu.ngd.platform.service.CartService;
 import edu.ngd.platform.service.FavoriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,9 @@ public class FavoriteController {
     @Autowired
     private FavoriteService favoriteService;
     
+    @Autowired
+    private CartService cartService;
+    
     /**
      * 跳转到收藏页面
      * @param model 模型对象
@@ -42,7 +47,14 @@ public class FavoriteController {
         // 获取用户收藏列表
         List<Product> favoriteProducts = favoriteService.getFavoriteList(user.getId());
         
+        // 添加购物车总数量到模型
+        Integer cartTotalQuantity = 0;
+        Cart cart = cartService.getCartByUserId(user.getId());
+        cartTotalQuantity = cartService.getCartTotalQuantity(cart.getId());
+        
         model.addAttribute("favoriteProducts", favoriteProducts);
+        model.addAttribute("cartTotalQuantity", cartTotalQuantity);
+        model.addAttribute("user", user); // 添加用户信息到模型
         return "favorite/list";
     }
     

@@ -46,6 +46,8 @@ public class CartController {
         
         model.addAttribute("cart", cart);
         model.addAttribute("cartItems", cartItems);
+        model.addAttribute("cartTotalQuantity", cart.getTotalQuantity());
+        model.addAttribute("user", user); // 添加用户信息到模型
         return "cart/list";
     }
     
@@ -117,5 +119,30 @@ public class CartController {
         // 清空购物车
         cartService.clearCart(cart.getId());
         return "redirect:/cart";
+    }
+    
+    /**
+     * 跳转到结算页面
+     * @param model 模型对象
+     * @param session HTTP会话
+     * @return 结算页面视图
+     */
+    @GetMapping("/checkout")
+    public String checkout(Model model, HttpSession session) {
+        // 获取当前登录用户
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            // 未登录，跳转到登录页面
+            return "redirect:/login";
+        }
+        
+        // 获取用户购物车
+        Cart cart = cartService.getCartByUserId(user.getId());
+        List<CartItem> cartItems = cartService.getCartItemsByCartId(cart.getId());
+        
+        model.addAttribute("cart", cart);
+        model.addAttribute("cartItems", cartItems);
+        model.addAttribute("user", user);
+        return "cart/checkout";
     }
 }

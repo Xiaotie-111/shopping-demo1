@@ -2,8 +2,11 @@ package edu.ngd.platform.controller;
 
 import edu.ngd.platform.model.Category;
 import edu.ngd.platform.model.Product;
+import edu.ngd.platform.model.Cart;
+import edu.ngd.platform.model.User;
 import edu.ngd.platform.service.CategoryService;
 import edu.ngd.platform.service.ProductService;
+import edu.ngd.platform.service.CartService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -30,6 +34,9 @@ public class ProductController {
     
     @Autowired
     private CategoryService categoryService;
+    
+    @Autowired
+    private CartService cartService;
     
     /**
      * 跳转到商品列表页面（管理端）
@@ -52,18 +59,31 @@ public class ProductController {
      * @param keyword 搜索关键词
      * @param categoryId 分类ID
      * @param page 当前页码，默认为1
+     * @param session HTTP会话
      * @return 用户端商品列表页面视图
      */
     @GetMapping("/browse")
     public String productBrowse(Model model, 
                               @RequestParam(required = false) String keyword, 
                               @RequestParam(required = false) Long categoryId, 
-                              @RequestParam(defaultValue = "1") Integer page) {
+                              @RequestParam(defaultValue = "1") Integer page,
+                              HttpSession session) {
         // 获取商品列表（可以根据关键词和分类筛选）
         List<Product> products = productService.listByCondition(keyword, categoryId);
         
         // 获取所有分类用于筛选
         List<Category> categories = categoryService.getAllCategories();
+        
+        // 从会话中获取用户信息
+        Object user = session.getAttribute("user");
+        
+        // 获取购物车总数量
+        Integer cartTotalQuantity = 0;
+        if (user != null) {
+            User loggedUser = (User) user;
+            Cart cart = cartService.getCartByUserId(loggedUser.getId());
+            cartTotalQuantity = cartService.getCartTotalQuantity(cart.getId());
+        }
         
         model.addAttribute("products", products);
         model.addAttribute("categories", categories);
@@ -71,6 +91,8 @@ public class ProductController {
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", 3); // 模拟总页数为3
+        model.addAttribute("user", user); // 将用户信息传递给模板
+        model.addAttribute("cartTotalQuantity", cartTotalQuantity); // 将购物车总数量传递给模板
         
         return "product/browse";
     }
@@ -79,10 +101,11 @@ public class ProductController {
      * 跳转到商品详情页面
      * @param id 商品ID
      * @param model 模型对象
+     * @param session HTTP会话
      * @return 商品详情页面视图
      */
     @GetMapping("/detail/{id}")
-    public String productDetail(@PathVariable Long id, Model model) {
+    public String productDetail(@PathVariable Long id, Model model, HttpSession session) {
         // 获取商品详情
         Product product = productService.getById(id);
         model.addAttribute("product", product);
@@ -90,6 +113,19 @@ public class ProductController {
         // 获取相关商品列表
         List<Product> products = productService.list();
         model.addAttribute("products", products);
+        
+        // 从会话中获取用户信息
+        Object user = session.getAttribute("user");
+        model.addAttribute("user", user);
+        
+        // 获取购物车总数量
+        Integer cartTotalQuantity = 0;
+        if (user != null) {
+            User loggedUser = (User) user;
+            Cart cart = cartService.getCartByUserId(loggedUser.getId());
+            cartTotalQuantity = cartService.getCartTotalQuantity(cart.getId());
+        }
+        model.addAttribute("cartTotalQuantity", cartTotalQuantity); // 将购物车总数量传递给模板
         
         return "product/detail";
     }
@@ -257,13 +293,27 @@ public class ProductController {
      * 处理立即购买请求
      * @param id 商品ID
      * @param model 模型对象
+     * @param session HTTP会话
      * @return 订单确认页面视图
      */
     @GetMapping("/buy-now/{id}")
-    public String buyNow(@PathVariable Long id, Model model) {
+    public String buyNow(@PathVariable Long id, Model model, HttpSession session) {
         // 获取商品详情
         Product product = productService.getById(id);
         model.addAttribute("product", product);
+        
+        // 获取当前登录用户
+        Object user = session.getAttribute("user");
+        model.addAttribute("user", user); // 添加用户信息到模型
+        
+        // 获取购物车总数量
+        Integer cartTotalQuantity = 0;
+        if (user != null) {
+            User loggedUser = (User) user;
+            Cart cart = cartService.getCartByUserId(loggedUser.getId());
+            cartTotalQuantity = cartService.getCartTotalQuantity(cart.getId());
+        }
+        model.addAttribute("cartTotalQuantity", cartTotalQuantity); // 将购物车总数量传递给模板
         
         // 返回订单确认页面
         return "order/confirm";

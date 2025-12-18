@@ -97,7 +97,8 @@
         }
         
         .cart,
-        .user-center {
+        .user-center,
+        .user-orders {
             display: flex;
             align-items: center;
             gap: 5px;
@@ -338,6 +339,23 @@
             margin-top: 5px;
         }
         
+        .btn-favorite {
+            background-color: white;
+            color: #e31235;
+            border: 1px solid #e31235;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .btn-favorite:hover {
+            background-color: #e31235;
+            color: white;
+        }
+
         /* 页脚 */
         footer {
             background-color: #2d3748;
@@ -473,6 +491,10 @@
                     <span>👤</span>
                     <span>我的京东</span>
                 </div>
+                <div class="user-orders" onclick="window.location.href='/order/list'">
+                    <span>📋</span>
+                    <span>我的订单</span>
+                </div>
             </div>
         </div>
     </div>
@@ -560,6 +582,7 @@
                             <div class="product-price">¥1299</div>
                             <div class="product-original-price">¥1899</div>
                             <div class="product-discount">3.0折特惠</div>
+                            <button class="btn-favorite" onclick="addToFavorite(1)">❤️ 收藏</button>
                         </div>
                     </div>
                     <div class="product-card">
@@ -571,6 +594,7 @@
                             <div class="product-price">¥399</div>
                             <div class="product-original-price">¥599</div>
                             <div class="product-discount">6.7折特惠</div>
+                            <button class="btn-favorite" onclick="addToFavorite(2)">❤️ 收藏</button>
                         </div>
                     </div>
                     <div class="product-card">
@@ -582,6 +606,7 @@
                             <div class="product-price">¥199</div>
                             <div class="product-original-price">¥399</div>
                             <div class="product-discount">5.0折特惠</div>
+                            <button class="btn-favorite" onclick="addToFavorite(3)">❤️ 收藏</button>
                         </div>
                     </div>
                     <div class="product-card">
@@ -593,6 +618,7 @@
                             <div class="product-price">¥599</div>
                             <div class="product-original-price">¥1299</div>
                             <div class="product-discount">4.6折特惠</div>
+                            <button class="btn-favorite" onclick="addToFavorite(4)">❤️ 收藏</button>
                         </div>
                     </div>
                     <div class="product-card">
@@ -604,6 +630,7 @@
                             <div class="product-price">¥1880</div>
                             <div class="product-original-price">¥2999</div>
                             <div class="product-discount">6.3折特惠</div>
+                            <button class="btn-favorite" onclick="addToFavorite(5)">❤️ 收藏</button>
                         </div>
                     </div>
                 </div>
@@ -666,13 +693,38 @@
                 // 这里可以添加轮播图切换逻辑
             });
         });
-        
+
         // 模拟商品图片加载
         document.querySelectorAll('.product-image img').forEach(img => {
             img.addEventListener('error', function() {
                 this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180"%3E%3Crect width="180" height="180" fill="%23f5f5f5"/%3E%3Ctext x="50%25" y="50%25" font-size="20" text-anchor="middle" dy="0.3em" fill="%23666"%3E商品图片%3C/text%3E%3C/svg%3E';
             });
         });
+
+        // 添加到收藏夹功能
+        function addToFavorite(productId) {
+            const formData = new FormData();
+            formData.append('productId', productId);
+            
+            fetch('/favorite/add', {
+                method: 'POST',
+                body: formData,
+                redirect: 'follow'
+            }).then(response => {
+                // 检查是否被重定向到登录页面
+                if (response.url.includes('/login')) {
+                    alert('请先登录后再添加收藏！');
+                    window.location.href = '/login';
+                } else if (response.ok) {
+                    alert('商品已成功加入收藏夹！');
+                } else {
+                    alert('添加到收藏夹失败，请重试！');
+                }
+            }).catch(error => {
+                console.error('添加到收藏夹失败:', error);
+                alert('添加到收藏夹失败，请重试！');
+            });
+        }
     </script>
 </body>
 </html>

@@ -2,12 +2,17 @@ package edu.ngd.platform.controller;
 
 import edu.ngd.platform.model.Order;
 import edu.ngd.platform.model.OrderItem;
+import edu.ngd.platform.model.Cart;
+import edu.ngd.platform.model.CartItem;
+import edu.ngd.platform.model.User;
 import edu.ngd.platform.service.OrderService;
+import edu.ngd.platform.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -20,31 +25,80 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
     
+    @Autowired
+    private CartService cartService;
+    
     /**
      * 跳转到订单列表页面
      * @param model 模型对象
      * @param page 当前页码，默认为1
+     * @param session HTTP会话
      * @return 订单列表页面视图
      */
     @GetMapping("/list")
-    public String orderList(Model model, @RequestParam(defaultValue = "1") Integer page) {
+    public String orderList(Model model, @RequestParam(defaultValue = "1") Integer page, HttpSession session) {
         List<Order> orders = orderService.getAllOrders();
         model.addAttribute("orders", orders);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", 3); // 模拟总页数为3
+        
+        // 从会话中获取用户信息
+        Object user = session.getAttribute("user");
+        model.addAttribute("user", user);
+        
+        // 获取购物车总数量
+        Integer cartTotalQuantity = 0;
+        if (user != null) {
+            User loggedUser = (User) user;
+            Cart cart = cartService.getCartByUserId(loggedUser.getId());
+            if (cart != null) {
+                cartTotalQuantity = cartService.getCartTotalQuantity(cart.getId());
+            }
+        }
+        model.addAttribute("cartTotalQuantity", cartTotalQuantity);
+        
         return "order/list";
+    }
+    
+    /**
+     * 跳转到管理员订单列表页面
+     * @param model 模型对象
+     * @return 管理员订单列表页面视图
+     */
+    @GetMapping("/admin_list")
+    public String adminOrderList(Model model) {
+        List<Order> orders = orderService.getAllOrders();
+        model.addAttribute("orders", orders);
+        return "order/admin_list";
     }
     
     /**
      * 跳转到订单详情页面
      * @param id 订单ID
      * @param model 模型对象
+     * @param session HTTP会话
      * @return 订单详情页面视图
      */
     @GetMapping("/detail/{id}")
-    public String orderDetail(@PathVariable Long id, Model model) {
+    public String orderDetail(@PathVariable Long id, Model model, HttpSession session) {
         Order order = orderService.getOrderById(id);
         model.addAttribute("order", order);
+        
+        // 从会话中获取用户信息
+        Object user = session.getAttribute("user");
+        model.addAttribute("user", user);
+        
+        // 获取购物车总数量
+        Integer cartTotalQuantity = 0;
+        if (user != null) {
+            User loggedUser = (User) user;
+            Cart cart = cartService.getCartByUserId(loggedUser.getId());
+            if (cart != null) {
+                cartTotalQuantity = cartService.getCartTotalQuantity(cart.getId());
+            }
+        }
+        model.addAttribute("cartTotalQuantity", cartTotalQuantity);
+        
         return "order/detail";
     }
     
@@ -119,12 +173,29 @@ public class OrderController {
      * 跳转到订单支付页面
      * @param id 订单ID
      * @param model 模型对象
+     * @param session HTTP会话
      * @return 订单支付页面视图
      */
     @GetMapping("/pay/{id}")
-    public String orderPay(@PathVariable Long id, Model model) {
+    public String orderPay(@PathVariable Long id, Model model, HttpSession session) {
         Order order = orderService.getOrderById(id);
         model.addAttribute("order", order);
+        
+        // 从会话中获取用户信息
+        Object user = session.getAttribute("user");
+        model.addAttribute("user", user);
+        
+        // 获取购物车总数量
+        Integer cartTotalQuantity = 0;
+        if (user != null) {
+            User loggedUser = (User) user;
+            Cart cart = cartService.getCartByUserId(loggedUser.getId());
+            if (cart != null) {
+                cartTotalQuantity = cartService.getCartTotalQuantity(cart.getId());
+            }
+        }
+        model.addAttribute("cartTotalQuantity", cartTotalQuantity);
+        
         return "order/pay";
     }
     
@@ -132,14 +203,18 @@ public class OrderController {
      * 处理订单支付请求
      * @param id 订单ID
      * @param paymentMethod 支付方式
-     * @param paymentNo 支付流水号
+     * @param paymentNo 支付流水号，可选，默认系统生成
      * @return 重定向到订单列表页面
      */
     @PostMapping("/pay")
-    public String doOrderPay(@RequestParam Long id, @RequestParam Integer paymentMethod, @RequestParam String paymentNo) {
+    public String doOrderPay(@RequestParam Long id, @RequestParam Integer paymentMethod, @RequestParam(required = false) String paymentNo) {
         Order order = orderService.getOrderById(id);
+        // 生成支付流水号（如果未提供）
+        if (paymentNo == null || paymentNo.isEmpty()) {
+            paymentNo = "PAY" + System.currentTimeMillis();
+        }
         orderService.payOrder(order.getOrderNo(), paymentMethod, paymentNo);
-        return "redirect:/order/list";
+        return "redirect:/order/confirm";
     }
     
     /**
@@ -218,52 +293,75 @@ public class OrderController {
     
     /**
      * 处理订单提交请求
-     * @param productId 商品ID
-     * @param productName 商品名称
-     * @param productPrice 商品价格
-     * @param totalAmount 总金额
      * @param consignee 收货人
      * @param phone 联系电话
      * @param address 收货地址
      * @param paymentMethod 支付方式
+     * @param session HTTP会话
      * @return 重定向到订单支付页面
      */
     @PostMapping("/submit")
-    public String submitOrder(@RequestParam Long productId,
-                             @RequestParam String productName,
-                             @RequestParam Double productPrice,
-                             @RequestParam Double totalAmount,
-                             @RequestParam String consignee,
-                             @RequestParam String phone,
-                             @RequestParam String address,
-                             @RequestParam Integer paymentMethod) {
+    public String submitOrder(@RequestParam("consignee") String consignee,
+                             @RequestParam("phone") String phone,
+                             @RequestParam("address") String address,
+                             @RequestParam("paymentMethod") Integer paymentMethod,
+                             HttpSession session) {
+        // 获取当前登录用户
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            // 未登录，跳转到登录页面
+            return "redirect:/login";
+        }
+        
+        // 获取用户购物车
+        Cart cart = cartService.getCartByUserId(user.getId());
+        List<CartItem> cartItems = cartService.getCartItemsByCartId(cart.getId());
+        
         // 创建订单对象
         Order order = new Order();
         order.setOrderNo("ORD" + System.currentTimeMillis());
-        order.setUserId(1L); // 模拟用户ID
-        order.setUserName("测试用户"); // 模拟用户名称
+        order.setUserId(user.getId());
+        order.setUserName(consignee); // 使用收货人作为用户名
+        
+        // 计算订单总金额
+        Double totalAmount = cart.getTotalPrice();
         order.setTotalAmount(totalAmount);
-        order.setActualAmount(totalAmount);
+        order.setActualAmount(totalAmount); // 实际金额等于总金额
         order.setStatus(1); // 待支付
         order.setPaymentMethod(paymentMethod);
         order.setShippingAddress(address);
-        order.setRemark("立即购买");
+        order.setRemark("从购物车结算");
         
-        // 创建订单项
-        OrderItem orderItem = new OrderItem();
-        orderItem.setProductId(productId);
-        orderItem.setProductName(productName);
-        orderItem.setPrice(productPrice);
-        orderItem.setQuantity(1);
-        orderItem.setTotalPrice(productPrice);
+        // 将购物车商品项转换为订单项
+        List<OrderItem> orderItems = new java.util.ArrayList<>();
+        for (CartItem cartItem : cartItems) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProductId(cartItem.getProductId());
+            orderItem.setProductName(cartItem.getProductName());
+            orderItem.setProductBrand(cartItem.getProductBrand());
+            orderItem.setPrice(cartItem.getProductPrice());
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setTotalPrice(cartItem.getProductPrice() * cartItem.getQuantity());
+            orderItem.setImageUrl(cartItem.getImageUrl());
+            orderItems.add(orderItem);
+        }
         
         // 将订单项添加到订单
-        order.setOrderItems(java.util.Collections.singletonList(orderItem));
+        order.setOrderItems(orderItems);
         
         // 保存订单
         orderService.createOrder(order);
         
         // 重定向到订单支付页面
         return "redirect:/order/pay/" + order.getId();
+    }
+    
+    /**
+     * 跳转到订单支付成功页面
+     * @return 订单支付成功页面视图
+     */
+    @GetMapping("/confirm")
+    public String orderConfirm() {
+        return "order/confirm";
     }
 }

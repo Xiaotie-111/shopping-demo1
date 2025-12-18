@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>订单管理</title>
+    <title>我的订单</title>
     <style>
         * {
             margin: 0;
@@ -13,465 +13,372 @@
         
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f7fa;
+            background-color: #f5f5f5;
             color: #333;
         }
         
-        .container {
-            display: grid;
-            grid-template-columns: 220px 1fr;
-            grid-template-rows: 60px 1fr;
-            grid-template-areas: 
-                "header header"
-                "sidebar main";
-            height: 100vh;
-        }
-        
-        /* 顶部标题栏 */
-        .header {
-            grid-area: header;
-            background-color: #4a5568;
+        /* 顶部导航栏 */
+        .navbar {
+            background-color: #232f3e;
             color: white;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
-        .header h1 {
-            font-size: 18px;
-        }
-        
-        .header .user-info {
-            display: flex;
-            align-items: center;
-        }
-        
-        .header .welcome {
-            margin-right: 20px;
-            font-size: 14px;
-        }
-        
-        .header .btn-logout {
-            background-color: #718096;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-        
-        .header .btn-logout:hover {
-            background-color: #4a5568;
-        }
-        
-        /* 左侧导航栏 */
-        .sidebar {
-            grid-area: sidebar;
-            background-color: #2d3748;
-            color: white;
-            padding: 20px 0;
-        }
-        
-        .sidebar .logo {
-            display: flex;
-            align-items: center;
-            padding: 0 20px 20px 20px;
-            border-bottom: 1px solid #4a5568;
-            margin-bottom: 20px;
-        }
-        
-        .sidebar .logo-icon {
-            font-size: 24px;
-            margin-right: 10px;
-        }
-        
-        .sidebar .logo-text {
-            font-size: 16px;
+        .navbar .logo {
+            font-size: 1.5rem;
             font-weight: bold;
+            display: flex;
+            align-items: center;
         }
         
-        .sidebar ul {
+        .navbar .logo-icon {
+            margin-right: 0.5rem;
+        }
+        
+        .navbar .nav-links {
+            display: flex;
             list-style: none;
         }
         
-        .sidebar li {
-            margin-bottom: 5px;
+        .navbar .nav-links li {
+            margin-right: 1.5rem;
         }
         
-        .sidebar a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: #e2e8f0;
+        .navbar .nav-links a {
+            color: white;
             text-decoration: none;
             font-size: 14px;
-            transition: background-color 0.3s;
+            transition: color 0.3s;
         }
         
-        .sidebar a:hover {
-            background-color: #4a5568;
+        .navbar .nav-links a:hover {
+            color: #ff9900;
         }
         
-        .sidebar a.active {
-            background-color: #4299e1;
-        }
-        
-        .sidebar a i {
-            margin-right: 10px;
-            font-size: 16px;
-        }
-        
-        /* 主要内容区域 */
-        .main {
-            grid-area: main;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        
-        .main h2 {
-            font-size: 16px;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        
-        /* 操作栏 */
-        .action-bar {
-            background-color: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .action-bar .search-box {
-            display: flex;
-            align-items: center;
-        }
-        
-        .action-bar .search-input {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px 0 0 4px;
-            font-size: 14px;
-            width: 200px;
-        }
-        
-        .action-bar .btn-search {
-            background-color: #667eea;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 0 4px 4px 0;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        /* 表格容器 */
-        .table-container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-        }
-        
-        .table-container table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .table-container th,
-        .table-container td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #f0f2f5;
-        }
-        
-        .table-container th {
-            background-color: #fafbfc;
+        .navbar .nav-links a.active {
+            color: #ff9900;
             font-weight: bold;
-            font-size: 14px;
-            color: #333;
         }
         
-        .table-container td {
-            font-size: 14px;
-            color: #666;
+        .navbar .user-actions {
+            display: flex;
+            align-items: center;
         }
         
-        /* 状态标签 */
-        .status {
-            font-size: 12px;
-            padding: 4px 12px;
-            border-radius: 12px;
-            display: inline-block;
-        }
-        
-        .status.waiting-payment {
-            background-color: #fff3e0;
-            color: #ef6c00;
-        }
-        
-        .status.paid {
-            background-color: #e3f2fd;
-            color: #1976d2;
-        }
-        
-        .status.shipped {
-            background-color: #e8f5e8;
-            color: #2e7d32;
-        }
-        
-        .status.completed {
-            background-color: #e0f7fa;
-            color: #00838f;
-        }
-        
-        .status.cancelled {
-            background-color: #ffebee;
-            color: #c62828;
-        }
-        
-        .status.refunded {
-            background-color: #f3e5f5;
-            color: #7b1fa2;
-        }
-        
-        /* 按钮样式 */
-        .btn {
-            padding: 4px 12px;
+        .navbar .btn {
+            padding: 0.5rem 1rem;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 12px;
-            margin-right: 5px;
-            transition: background-color 0.3s;
+            font-size: 14px;
+            transition: all 0.3s;
         }
         
-        .btn-detail {
-            background-color: #e3f2fd;
-            color: #1976d2;
+        .navbar .btn-primary {
+            background-color: #ff9900;
+            color: white;
         }
         
-        .btn-detail:hover {
-            background-color: #bbdefb;
+        .navbar .btn-primary:hover {
+            background-color: #ff6600;
         }
         
-        .btn-edit {
-            background-color: #fff8e1;
-            color: #ff6f00;
+        .navbar .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+            margin-right: 0.5rem;
         }
         
-        .btn-edit:hover {
-            background-color: #ffe082;
+        .navbar .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
         
-        .btn-delete {
-            background-color: #ffebee;
-            color: #c62828;
+        /* 主要内容区域 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
         }
         
-        .btn-delete:hover {
-            background-color: #ffcdd2;
+        /* 页面标题 */
+        .page-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 2rem;
         }
         
+        /* 订单列表容器 */
+        .order-list-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        
+        /* 订单列表标题 */
+        .order-list-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* 订单列表表格 */
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+        
+        .order-table th,
+        .order-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-table th {
+            background-color: #f9f9f9;
+            font-weight: bold;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .order-table td {
+            font-size: 14px;
+        }
+        
+        /* 订单状态 */
+        .status-paid {
+            color: #52c41a;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            color: #faad14;
+            font-weight: bold;
+        }
+        
+        .status-shipped {
+            color: #1890ff;
+            font-weight: bold;
+        }
+        
+        .status-completed {
+            color: #8c8c8c;
+            font-weight: bold;
+        }
+        
+        /* 支付方式 */
+        .payment-wechat {
+            color: #52c41a;
+        }
+        
+        .payment-alipay {
+            color: #1890ff;
+        }
+        
+        /* 操作按钮 */
         .btn-action {
-            background-color: #e8f5e8;
-            color: #2e7d32;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
         }
         
-        .btn-action:hover {
-            background-color: #c8e6c9;
+        .btn-view {
+            background-color: #1890ff;
+            color: white;
+            margin-right: 0.5rem;
         }
         
-        /* 分页样式 */
+        .btn-view:hover {
+            background-color: #40a9ff;
+        }
+        
+        .btn-pay {
+            background-color: #52c41a;
+            color: white;
+            margin-right: 0.5rem;
+        }
+        
+        .btn-pay:hover {
+            background-color: #73d13d;
+        }
+        
+        .btn-cancel {
+            background-color: #f5222d;
+            color: white;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #ff4d4f;
+        }
+        
+        /* 分页区域 */
         .pagination {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 20px;
+            gap: 0.5rem;
         }
         
         .pagination a {
-            display: inline-block;
-            padding: 8px 12px;
-            margin: 0 5px;
-            border: 1px solid #ddd;
+            padding: 0.5rem 1rem;
+            border: 1px solid #d9d9d9;
             border-radius: 4px;
-            color: #666;
             text-decoration: none;
+            color: #666;
             transition: all 0.3s;
         }
         
         .pagination a:hover {
-            background-color: #f5f7fa;
-            color: #667eea;
-            border-color: #667eea;
+            border-color: #ff9900;
+            color: #ff9900;
         }
         
-        .pagination .active {
-            background-color: #667eea;
+        .pagination a.active {
+            background-color: #ff9900;
             color: white;
-            border-color: #667eea;
+            border-color: #ff9900;
         }
-        
-        /* 模拟图标 */
-        .icon-category::before { content: "📁"; }
-        .icon-goods::before { content: "📦"; }
-        .icon-spec::before { content: "⚙️"; }
-        .icon-inventory::before { content: "📊"; }
-        .icon-orders::before { content: "📋"; }
-        .icon-home::before { content: "🏠"; }
     </style>
 </head>
 <body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">🛒</span>
+            <span>电商管理系统</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" >首页</a></li>
+            <li><a href="/product/list">商品分类</a></li>
+            <li><a href="/product/browse">热销</a></li>
+            <li><a href="/product/browse">新品</a></li>
+            <li><a href="/order/list" class="active">我的订单</a></li>
+            <li><a href="/user/center">个人中心</a></li>
+            <li><a href="/logout">退出</a></li>
+        </ul>
+        <div class="user-actions">
+            <a href="/cart" class="btn btn-outline">
+                购物车
+            </a>
+        </div>
+    </nav>
+    
+    <!-- 主要内容区域 -->
     <div class="container">
-        <!-- 顶部标题栏 -->
-        <header class="header">
-            <h1>电商管理系统</h1>
-            <div class="user-info">
-                <span class="welcome">欢迎，管理员</span>
-                <button class="btn-logout" onclick="logout()">退出登录</button>
-            </div>
-        </header>
+        <h1 class="page-title">我的订单</h1>
         
-        <!-- 左侧导航栏 -->
-        <aside class="sidebar">
-            <div class="logo">
-                <div class="logo-icon">🛒</div>
-                <div class="logo-text">电商管理系统</div>
-            </div>
-            <ul>
-                <li><a href="/index"><i class="icon-home"></i>首页</a></li>
-                <li><a href="/category/list"><i class="icon-category"></i>分类管理</a></li>
-                <li><a href="/product/list"><i class="icon-goods"></i>商品管理</a></li>
-                <li><a href="/spec/list"><i class="icon-spec"></i>规格配置</a></li>
-                <li><a href="/inventory/list"><i class="icon-inventory"></i>库存管理</a></li>
-                <li><a href="/order/list" class="active"><i class="icon-orders"></i>订单管理</a></li>
-            </ul>
-        </aside>
-        
-        <!-- 主要内容区域 -->
-        <main class="main">
-            <h2>订单管理</h2>
+        <div class="order-list-container">
+            <h2 class="order-list-title">订单列表</h2>
             
-            <!-- 操作栏 -->
-            <div class="action-bar">
-                <div class="search-box">
-                    <input type="text" class="search-input" id="keyword" placeholder="请输入订单号或用户名">
-                    <button class="btn-search" onclick="searchOrder()">搜索</button>
-                </div>
-            </div>
-            
-            <!-- 表格容器 -->
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>订单ID</th>
-                            <th>订单编号</th>
-                            <th>用户名称</th>
-                            <th>总金额</th>
-                            <th>实付金额</th>
-                            <th>状态</th>
-                            <th>支付方式</th>
-                            <th>创建时间</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="order : ${orders}">
-                            <td th:text="${order.id}"></td>
-                            <td th:text="${order.orderNo}"></td>
-                            <td th:text="${order.userName}"></td>
-                            <td th:text="${order.totalAmount}"></td>
-                            <td th:text="${order.actualAmount}"></td>
-                            <td>
-                                <span class="status waiting-payment" th:if="${order.status == 1}">待支付</span>
-                                <span class="status paid" th:if="${order.status == 2}">已支付</span>
-                                <span class="status shipped" th:if="${order.status == 3}">已发货</span>
-                                <span class="status completed" th:if="${order.status == 4}">已完成</span>
-                                <span class="status cancelled" th:if="${order.status == 5}">已取消</span>
-                                <span class="status refunded" th:if="${order.status == 6}">已退款</span>
-                            </td>
-                            <td th:text="${order.paymentMethod == 1 ? '支付宝' : (order.paymentMethod == 2 ? '微信支付' : '未支付')}"></td>
-                            <td th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                            <td>
-                                <button class="btn btn-detail" th:onclick="'viewOrderDetail(' + ${order.id} + ')'">详情</button>
-                                <button class="btn btn-edit" th:onclick="'editOrder(' + ${order.id} + ')'">编辑</button>
-                                <button class="btn btn-delete" th:onclick="'deleteOrder(' + ${order.id} + ')'">删除</button>
-                                <button class="btn btn-action" th:if="${order.status == 1}" th:onclick="'payOrder(' + ${order.id} + ')'">支付</button>
-                                <button class="btn btn-action" th:if="${order.status == 2}" th:onclick="'shipOrder(' + ${order.id} + ')'">发货</button>
-                                <button class="btn btn-action" th:if="${order.status == 3}" th:onclick="'receiveOrder(' + ${order.id} + ')'">确认收货</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>总价</th>
+                        <th>商品详情</th>
+                        <th>收货信息</th>
+                        <th>订单状态</th>
+                        <th>支付方式</th>
+                        <th>下单时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 订单列表 -->
+                    <tr th:each="order : ${orders}">
+                        <td th:text="${order.id}"></td>
+                        <td>¥[[${order.totalAmount}]]</td>
+                        <td>
+                            <div th:each="item : ${order.orderItems}">
+                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                                    <img th:src="${item.imageUrl}" th:if="${item.imageUrl != null and item.imageUrl != ''}" width="40" height="40" style="object-fit: cover; border-radius: 4px;">
+                                    <span th:unless="${item.imageUrl != null and item.imageUrl != ''}">📦</span>
+                                    <div>
+                                        <div><span th:text="${item.productName}"></span> x <span th:text="${item.quantity}"></span></div>
+                                        <div style="font-size: 12px; color: #666;" th:text="${item.productBrand}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <span th:text="${order.userName}"></span>
+                            </div>
+                            <div th:text="${order.shippingAddress}"></div>
+                        </td>
+                        <td>
+                            <span th:classappend="${order.status == 1 ? 'status-pending' : (order.status == 2 ? 'status-paid' : (order.status == 3 ? 'status-shipped' : 'status-completed'))}">
+                                <span th:text="${order.status == 1 ? '待支付' : (order.status == 2 ? '已付款' : (order.status == 3 ? '已发货' : '已完成'))}"></span>
+                            </span>
+                        </td>
+                        <td>
+                            <span th:classappend="${order.paymentMethod == 1 ? 'payment-wechat' : 'payment-alipay'}">
+                                <span th:text="${order.paymentMethod == 1 ? '微信' : '支付宝'}"></span>
+                            </span>
+                        </td>
+                        <td th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                        <td>
+                            <a th:href="'/order/detail/' + ${order.id}" class="btn-action btn-view">查看</a>
+                            <a th:href="'/order/pay/' + ${order.id}" th:if="${order.status == 1}" class="btn-action btn-pay">支付</a>
+                        </td>
+                    </tr>
+                    
+                    <!-- 模拟订单数据 -->
+                    <tr>
+                        <td>1</td>
+                        <td>¥59.0</td>
+                        <td>意大利牛排三明治(35.0) x 1<br>半份土豆泥(24.0) x 1</td>
+                        <td>
+                            <div>张三 18929126043</div>
+                            <div>浙江省杭州市杭州电子科技大学</div>
+                        </td>
+                        <td><span class="status-paid">已付款</span></td>
+                        <td><span class="payment-wechat">微信</span></td>
+                        <td>2025-01-13 23:59:50</td>
+                        <td>
+                            <a href="#" class="btn-action btn-view">查看</a>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>2</td>
+                        <td>¥89.0</td>
+                        <td>经典汉堡套餐(55.0) x 1<br>可乐(15.0) x 1<br>薯条(19.0) x 1</td>
+                        <td>
+                            <div>李四 13800138000</div>
+                            <div>上海市浦东新区张江高科技园区</div>
+                        </td>
+                        <td><span class="status-pending">待支付</span></td>
+                        <td><span class="payment-alipay">支付宝</span></td>
+                        <td>2025-01-13 23:58:30</td>
+                        <td>
+                            <a href="#" class="btn-action btn-view">查看</a>
+                            <a href="#" class="btn-action btn-pay">支付</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             
             <!-- 分页 -->
             <div class="pagination">
-                <a th:href="@{/order/list(page=${currentPage - 1})}" th:unless="${currentPage == 1}">上一页</a>
-                <a th:href="@{/order/list(page=1)}" th:classappend="${currentPage == 1 ? 'active' : ''}">1</a>
-                <a th:href="@{/order/list(page=2)}" th:classappend="${currentPage == 2 ? 'active' : ''}">2</a>
-                <a th:href="@{/order/list(page=3)}" th:classappend="${currentPage == 3 ? 'active' : ''}">3</a>
-                <a th:href="@{/order/list(page=${currentPage + 1})}" th:unless="${currentPage == totalPages}">下一页</a>
+                <a href="#">上一页</a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">下一页</a>
             </div>
-        </main>
+        </div>
     </div>
-    
-    <script>
-        // 退出登录功能
-        function logout() {
-            if (confirm('确定要退出登录吗？')) {
-                window.location.href = '/logout';
-            }
-        }
-        
-        // 查看订单详情
-        function viewOrderDetail(id) {
-            window.location.href = '/order/detail/' + id;
-        }
-        
-        // 编辑订单
-        function editOrder(id) {
-            window.location.href = '/order/edit/' + id;
-        }
-        
-        // 删除订单
-        function deleteOrder(id) {
-            if (confirm('确定要删除这个订单吗？')) {
-                window.location.href = '/order/delete/' + id;
-            }
-        }
-        
-        // 支付订单
-        function payOrder(id) {
-            window.location.href = '/order/pay/' + id;
-        }
-        
-        // 发货
-        function shipOrder(id) {
-            window.location.href = '/order/ship/' + id;
-        }
-        
-        // 确认收货
-        function receiveOrder(id) {
-            if (confirm('确定要确认收货吗？')) {
-                window.location.href = '/order/receive/' + id;
-            }
-        }
-        
-        // 搜索订单
-        function searchOrder() {
-            const keyword = document.getElementById('keyword').value;
-            window.location.href = '/order/search?keyword=' + encodeURIComponent(keyword);
-        }
-    </script>
 </body>
 </html>

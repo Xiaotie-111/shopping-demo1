@@ -3,94 +3,106 @@ package edu.ngd.platform.controller;
 import edu.ngd.platform.model.User;
 import edu.ngd.platform.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.servlet.http.HttpSession;
 
 /**
- * 用户服务Controller
+ * 用户中心控制器
  */
-@RestController
-@RequestMapping("/api/user")
+@Controller
+@RequestMapping("/user")
 public class UserController {
     
     @Autowired
     private UserService userService;
     
     /**
-     * 获取所有用户
-     * @return 用户列表
+     * 跳转到个人中心页面
+     * @param model 模型对象
+     * @param session HTTP会话
+     * @return 个人中心页面视图
      */
-    @GetMapping("/list")
-    public List<User> list() {
-        return userService.list();
+    @GetMapping("/center")
+    public String userCenter(Model model, HttpSession session) {
+        // 从会话中获取用户信息
+        Object user = session.getAttribute("user");
+        model.addAttribute("user", user);
+        return "user/center";
     }
     
     /**
-     * 根据ID获取用户
-     * @param id 用户ID
-     * @return 用户信息
+     * 更新收货信息
+     * @param phone 联系电话
+     * @param session HTTP会话
+     * @return 重定向到个人中心页面
      */
-    @GetMapping("/{id}")
-    public User getById(@PathVariable Long id) {
-        return userService.getById(id);
+    @PostMapping("/updateAddress")
+    public String updateAddress(@RequestParam String phone,
+                               HttpSession session) {
+        // 从会话中获取用户信息
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            // 更新用户信息
+            user.setPhone(phone);
+            userService.updateById(user);
+            // 更新会话中的用户信息
+            session.setAttribute("user", user);
+        }
+        return "redirect:/user/center";
     }
     
     /**
-     * 添加用户
-     * @param user 用户信息
-     * @return 是否添加成功
+     * 更新个人信息
+     * @param phone 联系电话
+     * @param session HTTP会话
+     * @return 重定向到个人中心页面
      */
-    @PostMapping("/add")
-    public boolean add(@RequestBody User user) {
-        return userService.save(user);
+    @PostMapping("/updateInfo")
+    public String updateInfo(@RequestParam String phone,
+                            HttpSession session) {
+        // 从会话中获取用户信息
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            // 更新用户信息
+            user.setPhone(phone);
+            userService.updateById(user);
+            // 更新会话中的用户信息
+            session.setAttribute("user", user);
+        }
+        return "redirect:/user/center";
     }
     
     /**
-     * 更新用户
-     * @param user 用户信息
-     * @return 是否更新成功
+     * 更新密码
+     * @param password 原密码
+     * @param newPassword 新密码
+     * @param confirmPassword 确认密码
+     * @param session HTTP会话
+     * @return 重定向到个人中心页面
      */
-    @PutMapping("/update")
-    public boolean update(@RequestBody User user) {
-        return userService.updateById(user);
-    }
-    
-    /**
-     * 删除用户
-     * @param id 用户ID
-     * @return 是否删除成功
-     */
-    @DeleteMapping("/{id}")
-    public boolean delete(@PathVariable Long id) {
-        return userService.removeById(id);
-    }
-    
-    /**
-     * 用户登录
-     * @param username 用户名
-     * @param password 密码
-     * @param userType 用户类型
-     * @return 用户信息
-     */
-    @PostMapping("/login")
-    public User login(@RequestParam String username, @RequestParam String password, @RequestParam(defaultValue = "USER") String userType) {
-        return userService.login(username, password, userType);
-    }
-    
-    /**
-     * 根据用户名获取用户
-     * @param username 用户名
-     * 
-     * 
-
-
-
-     
-     * @return 用户信息
-     */
-    @GetMapping("/username/{username}")
-    public User getByUsername(@PathVariable String username) {
-        return userService.getByUsername(username);
+    @PostMapping("/updatePassword")
+    public String updatePassword(@RequestParam String password,
+                                @RequestParam String newPassword,
+                                @RequestParam String confirmPassword,
+                                HttpSession session) {
+        // 从会话中获取用户信息
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            // 验证原密码
+            if (user.getPassword().equals(password)) {
+                // 验证新密码和确认密码是否一致
+                if (newPassword.equals(confirmPassword)) {
+                    // 更新密码
+                    user.setPassword(newPassword);
+                    userService.updateById(user);
+                    // 更新会话中的用户信息
+                    session.setAttribute("user", user);
+                }
+            }
+        }
+        return "redirect:/user/center";
     }
 }

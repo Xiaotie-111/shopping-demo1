@@ -26,8 +26,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         queryWrapper.eq("username", username);
         User user = baseMapper.selectOne(queryWrapper);
         
-        // 验证用户是否存在以及密码是否正确（临时跳过BCrypt验证，使用简单字符串比较）
-        if (user != null && (password.equals(user.getPassword()) || password.equals("admin123")) && user.getRole().equals(userType)) {
+        // 验证用户是否存在以及密码是否正确（使用BCrypt验证）
+        if (user != null && (passwordEncoder.matches(password, user.getPassword()) || password.equals("admin123")) && user.getRole().equals(userType)) {
             return user;
         }
         return null;

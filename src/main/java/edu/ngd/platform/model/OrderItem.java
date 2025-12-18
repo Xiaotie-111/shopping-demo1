@@ -1,17 +1,27 @@
 package edu.ngd.platform.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 /**
  * 订单项实体类
  */
+@TableName("order_item")
 public class OrderItem {
     private Long id;
     private Long orderId;
     private Long productId;
     private String productName;
+    @TableField(exist = false)
+    private String productBrand;
+    @TableField(exist = false)
     private String productCode;
+    @TableField("product_price")
     private Double price;
     private Integer quantity;
+    @TableField(exist = false)
     private Double totalPrice;
+    @TableField(exist = false)
     private String imageUrl;
     
     // 构造方法
@@ -49,6 +59,14 @@ public class OrderItem {
     
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+    
+    public String getProductBrand() {
+        return productBrand;
+    }
+    
+    public void setProductBrand(String productBrand) {
+        this.productBrand = productBrand;
     }
     
     public String getProductCode() {

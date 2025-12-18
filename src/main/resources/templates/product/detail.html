@@ -122,6 +122,28 @@
             background-color: rgba(255, 255, 255, 0.1);
         }
         
+        /* 购物车徽章样式 */
+        .cart-badge {
+            display: inline-block;
+            background-color: #ff4757;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            border-radius: 50%;
+            margin-left: 5px;
+            position: relative;
+            top: -8px;
+        }
+        
+        /* 导航栏按钮样式调整 */
+        .btn-outline {
+            position: relative;
+        }
+        
         /* 主要内容区域 */
         .container {
             max-width: 1200px;
@@ -388,9 +410,13 @@
         </div>
         
         <div class="user-actions">
-            <a href="/cart" class="btn btn-outline">购物车</a>
+            <a href="/cart" class="btn btn-outline">
+                购物车
+                <span class="cart-badge" th:if="${cartTotalQuantity > 0}" th:text="${cartTotalQuantity}"></span>
+            </a>
             <a href="/favorite" class="btn btn-outline">收藏夹</a>
-            <a href="/login" class="btn btn-primary">登录</a>
+            <a href="/login" class="btn btn-primary" th:if="${user == null}">登录</a>
+            <a href="/logout" class="btn btn-primary" th:if="${user != null}">退出</a>
         </div>
     </nav>
     
@@ -469,14 +495,48 @@
         
         // 加入购物车
         function addToCart(productId) {
-            // TODO: 实现加入购物车功能
-            alert('商品已加入购物车！');
+            const formData = new FormData();
+            formData.append('productId', productId);
+            formData.append('quantity', 1);
+            
+            fetch('/cart/add', {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload(); // 刷新页面以更新购物车红点
+                } else {
+                    alert('添加到购物车失败，请重试！');
+                }
+            }).catch(error => {
+                console.error('添加到购物车失败:', error);
+                alert('添加到购物车失败，请重试！');
+            });
         }
         
         // 加入收藏夹
         function addToFavorite(productId) {
-            // TODO: 实现加入收藏夹功能
-            alert('商品已加入收藏夹！');
+            const formData = new FormData();
+            formData.append('productId', productId);
+            
+            fetch('/favorite/add', {
+                method: 'POST',
+                body: formData,
+                redirect: 'follow'
+            }).then(response => {
+                // 检查是否被重定向到登录页面
+                if (response.url.includes('/login')) {
+                    alert('请先登录后再添加收藏！');
+                    window.location.href = '/login';
+                } else if (response.ok) {
+                    alert('商品已成功加入收藏夹！');
+                } else {
+                    alert('添加到收藏夹失败，请重试！');
+                }
+            }).catch(error => {
+                console.error('添加到收藏夹失败:', error);
+                alert('添加到收藏夹失败，请重试！');
+            });
         }
         
         // 立即购买

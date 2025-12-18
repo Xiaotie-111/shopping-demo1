@@ -1,12 +1,15 @@
 package edu.ngd.platform.controller;
 
+import edu.ngd.platform.model.Cart;
 import edu.ngd.platform.model.User;
+import edu.ngd.platform.service.CartService;
 import edu.ngd.platform.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -19,6 +22,9 @@ public class LoginController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private CartService cartService;
     
     /**
      * 跳转到登录页面（已废弃，保留兼容）
@@ -71,11 +77,25 @@ public class LoginController {
     
     /**
      * 跳转到主页面
+     * @param model 模型对象
+     * @param session HTTP会话
      * @return 主页面视图
      */
     @GetMapping("/index")
-    public String index() {
+    public String index(Model model, HttpSession session) {
         // 允许直接访问首页，不检查登录状态
+        Object user = session.getAttribute("user");
+        
+        // 添加购物车总数量到模型
+        Integer cartTotalQuantity = 0;
+        if (user != null) {
+            User loggedUser = (User) user;
+            Cart cart = cartService.getCartByUserId(loggedUser.getId());
+            cartTotalQuantity = cartService.getCartTotalQuantity(cart.getId());
+        }
+        model.addAttribute("cartTotalQuantity", cartTotalQuantity);
+        
+        model.addAttribute("user", user); // 将用户信息传递给模板
         return "index";
     }
     

@@ -171,6 +171,15 @@ public class CartServiceImpl implements CartService {
         return totalPrice;
     }
     
+    @Override
+    public Integer getCartTotalQuantity(Long cartId) {
+        Cart cart = CART_MAP.get(cartId);
+        if (cart != null) {
+            return cart.getTotalQuantity();
+        }
+        return 0;
+    }
+    
     // 更新购物车总价和总数量
     private void updateCartTotal(Cart cart) {
         List<CartItem> cartItems = CART_ITEM_MAP.getOrDefault(cart.getId(), new ArrayList<>());

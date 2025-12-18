@@ -60,4 +60,11 @@ public interface CartService {
      * @return 购物车总价
      */
     Double calculateTotalPrice(Long cartId);
+    
+    /**
+     * 获取购物车商品总数
+     * @param cartId 购物车ID
+     * @return 购物车商品总数
+     */
+    Integer getCartTotalQuantity(Long cartId);
 }

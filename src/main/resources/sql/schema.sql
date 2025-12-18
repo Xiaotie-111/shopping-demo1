@@ -58,10 +58,22 @@ CREATE TABLE IF NOT EXISTS `order` (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     order_no VARCHAR(50) UNIQUE NOT NULL,
     user_id BIGINT NOT NULL,
+    user_name VARCHAR(50),
     total_amount DOUBLE NOT NULL,
+    actual_amount DOUBLE,
     status INT NOT NULL DEFAULT 0,
+    payment_method INT,
+    payment_no VARCHAR(50),
+    payment_time TIMESTAMP,
+    shipping_method INT,
+    shipping_address VARCHAR(255),
+    shipping_time TIMESTAMP,
+    receive_time TIMESTAMP,
+    remark VARCHAR(255),
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    create_by VARCHAR(50),
+    update_by VARCHAR(50)
 );
 
 -- 创建订单项表

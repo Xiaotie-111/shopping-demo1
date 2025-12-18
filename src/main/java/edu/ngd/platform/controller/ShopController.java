@@ -1,7 +1,10 @@
 package edu.ngd.platform.controller;
 
+import edu.ngd.platform.model.Cart;
 import edu.ngd.platform.model.Category;
 import edu.ngd.platform.model.Product;
+import edu.ngd.platform.model.User;
+import edu.ngd.platform.service.CartService;
 import edu.ngd.platform.service.CategoryService;
 import edu.ngd.platform.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -24,33 +28,16 @@ public class ShopController {
     @Autowired
     private CategoryService categoryService;
     
+    @Autowired
+    private CartService cartService;
+    
     /**
      * 跳转到电商平台首页
-     * @return 电商平台首页视图
+     * @return 重定向到商品浏览页面
      */
     @GetMapping("/")
-    public String index(Model model, 
-                       @RequestParam(required = false) String keyword, 
-                       @RequestParam(required = false) Long categoryId, 
-                       @RequestParam(defaultValue = "1") Integer page,
-                       @RequestParam(required = false) String sortBy,
-                       @RequestParam(required = false) String sortOrder) {
-        // 获取商品列表（可以根据关键词和分类筛选，支持排序）
-        List<Product> products = productService.listByCondition(keyword, categoryId);
-        
-        // 获取所有分类用于筛选
-        List<Category> categories = categoryService.getAllCategories();
-        
-        model.addAttribute("products", products);
-        model.addAttribute("categories", categories);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("categoryId", categoryId);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", 3); // 模拟总页数为3
-        model.addAttribute("sortBy", sortBy);
-        model.addAttribute("sortOrder", sortOrder);
-        
-        return "product/browse";
+    public String index() {
+        return "redirect:/product/browse";
     }
     
     /**
