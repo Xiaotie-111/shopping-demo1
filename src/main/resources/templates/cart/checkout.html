@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>结算 - 电商平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            background-color: #2d3748;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar .logo-icon {
+            margin-right: 0.5rem;
+        }
+        
+        .navbar .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .navbar .nav-links li {
+            margin-right: 1.5rem;
+        }
+        
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .navbar .nav-links a:hover {
+            color: #667eea;
+        }
+        
+        .navbar .search-box {
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar .search-input {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 14px;
+            width: 250px;
+        }
+        
+        .navbar .btn-search {
+            background-color: #667eea;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .navbar .btn-search:hover {
+            background-color: #5a6fd8;
+        }
+        
+        .navbar .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar .btn {
+            margin-left: 1rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .navbar .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        .navbar .btn-primary:hover {
+            background-color: #5a6fd8;
+        }
+        
+        .navbar .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+        }
+        
+        .navbar .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 购物车徽章样式 */
+        .cart-badge {
+            display: inline-block;
+            background-color: #ff4757;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            border-radius: 50%;
+            margin-left: 5px;
+            position: relative;
+            top: -8px;
+        }
+        
+        /* 导航栏按钮样式调整 */
+        .btn-outline {
+            position: relative;
+        }
+        
+        /* 主要内容区域 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* 结算标题 */
+        .checkout-header {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .checkout-header h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .checkout-header .subtitle {
+            font-size: 1rem;
+            color: #666;
+        }
+        
+        /* 结算内容 */
+        .checkout-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        /* 表单容器 */
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+        
+        /* 表单标题 */
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        
+        .form-section h2 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* 表单组 */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        /* 表单标签 */
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 表单输入框 */
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        /* 订单摘要 */
+        .order-summary {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .order-summary h2 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* 订单项目 */
+        .order-items {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1.5rem;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .order-item .item-name {
+            color: #666;
+        }
+        
+        /* 订单总计 */
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .order-total .total-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .order-total .total-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e53e3e;
+        }
+        
+        /* 提交按钮 */
+        .btn-submit {
+            width: 100%;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-submit:hover {
+            background-color: #5a6fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .checkout-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .navbar .nav-links {
+                display: none;
+            }
+            
+            .navbar .search-input {
+                width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">🛒</span>
+            <span>电商管理系统</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" >首页</a></li>
+            <li><a href="/product/list">商品分类</a></li>
+            <li><a href="/product/browse">热销</a></li>
+            <li><a href="/product/browse">新品</a></li>
+            <li><a href="/order/list">我的订单</a></li>
+            <li><a href="/user/center">个人中心</a></li>
+            <li><a href="/logout">退出</a></li>
+        </ul>
+        <div class="user-actions">
+            <a href="/cart" class="btn btn-outline">
+                购物车
+            </a>
+        </div>
+    </nav>
+    
+    <!-- 主要内容区域 -->
+    <div class="container">
+        <div class="checkout-header">
+            <h1>结算</h1>
+            <p class="subtitle">请填写收货信息并确认订单</p>
+        </div>
+        
+        <div class="checkout-content">
+            <!-- 表单容器 -->
+            <div class="form-container">
+                <form action="/order/submit" method="post">
+                    <!-- 收货信息 -->
+                    <div class="form-section">
+                        <h2>收货信息</h2>
+                        <div class="form-group">
+                            <label class="form-label" for="consignee">收货人</label>
+                            <input type="text" class="form-input" id="consignee" name="consignee" placeholder="请输入收货人" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="phone">联系电话</label>
+                            <input type="tel" class="form-input" id="phone" name="phone" placeholder="请输入联系电话" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="address">收货地址</label>
+                            <input type="text" class="form-input" id="address" name="address" placeholder="请输入收货地址" required>
+                        </div>
+                    </div>
+                    
+                    <!-- 支付方式 -->
+                    <div class="form-section">
+                        <h2>支付方式</h2>
+                        <div class="form-group">
+                            <div class="payment-methods">
+                                <label class="payment-option">
+                                    <input type="radio" name="paymentMethod" value="1" id="wechat" checked>
+                                    <span>微信支付</span>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="paymentMethod" value="2" id="alipay">
+                                    <span>支付宝</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 提交按钮 -->
+                    <button type="submit" class="btn-submit">提交订单</button>
+                </form>
+            </div>
+            
+            <!-- 订单摘要 -->
+            <div class="order-summary">
+                <h2>订单摘要</h2>
+                
+                <!-- 订单项目 -->
+                <div class="order-items" th:each="cartItem : ${cartItems}">
+                    <div class="order-item">
+                        <span class="item-name" th:text="${cartItem.productName} + ' x ' + ${cartItem.quantity}"></span>
+                        <span class="item-price" th:text="'¥' + ${cartItem.productPrice * cartItem.quantity}"></span>
+                    </div>
+                </div>
+                <div class="order-item">
+                    <span class="item-name">运费</span>
+                    <span class="item-price">¥0.00</span>
+                </div>
+                
+                <!-- 订单总计 -->
+                <div class="order-total">
+                    <span class="total-label">总计</span>
+                    <span class="total-value" th:text="'¥' + ${cart.totalPrice}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 支付方式选择
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', () => {
+                // 移除所有选项的active类
+                document.querySelectorAll('.payment-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                // 添加当前选项的active类
+                option.classList.add('active');
+                // 选中对应的radio
+                const radio = option.querySelector('input[type="radio"]');
+                radio.checked = true;
+            });
+        });
+    </script>
+</body>
+</html>

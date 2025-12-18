@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            grid-template-rows: 60px 1fr;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            height: 100vh;
+        }
+        
+        /* 顶部标题栏 */
+        .header {
+            grid-area: header;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .header .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header .welcome {
+            margin-right: 20px;
+            font-size: 14px;
+        }
+        
+        .header .btn-logout {
+            background-color: #f0f2f5;
+            color: #666;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .header .btn-logout:hover {
+            background-color: #e4e6eb;
+        }
+        
+        /* 左侧导航栏 */
+        .sidebar {
+            grid-area: sidebar;
+            background-color: white;
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+            padding: 20px 0;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar a:hover {
+            background-color: #f5f7fa;
+            color: #667eea;
+        }
+        
+        .sidebar a.active {
+            background-color: #f0f2f5;
+            color: #667eea;
+            border-left-color: #667eea;
+        }
+        
+        /* 主要内容区域 */
+        .main {
+            grid-area: main;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .main h2 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        /* 订单搜索区域 */
+        .search-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-container input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .search-container .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .search-container .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        /* 订单列表 */
+        .order-list {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .order-table th,
+        .order-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        
+        .order-table th {
+            background-color: #fafbfc;
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .order-table td {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* 状态标签 */
+        .status {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .status.waiting-payment {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .status.paid {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status.shipped {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .status.completed {
+            background-color: #e0f7fa;
+            color: #00838f;
+        }
+        
+        .status.cancelled {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .status.refunded {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+        }
+        
+        /* 操作按钮 */
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 6px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #5a6fd8;
+        }
+        
+        .btn-danger {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #da190b;
+        }
+        
+        /* 分页区域 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .pagination a:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .pagination a.active {
+            background-color: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题栏 -->
+        <header class="header">
+            <h1>电商管理系统</h1>
+            <div class="user-info">
+                <span class="welcome">欢迎，管理员</span>
+                <button class="btn-logout" onclick="logout()">退出登录</button>
+            </div>
+        </header>
+        
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar">
+            <ul>
+                <li><a href="/index"><i class="icon-home"></i>首页</a></li>
+                <li><a href="/category/list"><i class="icon-category"></i>分类管理</a></li>
+                <li><a href="/product/list"><i class="icon-goods"></i>商品管理</a></li>
+                <li><a href="/spec/list"><i class="icon-spec"></i>规格配置</a></li>
+                <li><a href="/inventory/list"><i class="icon-inventory"></i>库存管理</a></li>
+                <li><a href="/order/admin_list" class="active"><i class="icon-orders"></i>订单管理</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 主要内容区域 -->
+        <main class="main">
+            <h2>订单管理</h2>
+            
+            <!-- 搜索区域 -->
+            <div class="search-container">
+                <input type="text" placeholder="请输入订单编号或用户名搜索">
+                <button class="btn btn-primary">搜索</button>
+            </div>
+            
+            <!-- 订单列表 -->
+            <div class="order-list">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>订单编号</th>
+                            <th>用户ID</th>
+                            <th>用户名称</th>
+                            <th>订单金额</th>
+                            <th>订单状态</th>
+                            <th>支付方式</th>
+                            <th>下单时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 订单列表 -->
+                        <tr>
+                            <td>ORD1765855631785</td>
+                            <td>1</td>
+                            <td></td>
+                            <td>307.0</td>
+                            <td>
+                                <span class="status waiting-payment">
+                                    <span>待支付</span>
+                                </span>
+                            </td>
+                            <td>未支付</td>
+                            <td>2025-12-16 11:27:12</td>
+                            <td>
+                                <a href="/order/detail/2" class="btn btn-primary">查看详情</a>
+                                <button class="btn btn-danger" onclick="deleteOrder(2)">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ORD1765855686539</td>
+                            <td>1</td>
+                            <td></td>
+                            <td>307.0</td>
+                            <td>
+                                <span class="status paid">
+                                    <span>已支付</span>
+                                </span>
+                            </td>
+                            <td>未支付</td>
+                            <td>2025-12-16 11:28:07</td>
+                            <td>
+                                <a href="/order/detail/3" class="btn btn-primary">查看详情</a>
+                                <button class="btn btn-danger" onclick="deleteOrder(3)">删除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- 分页区域 -->
+            <div class="pagination">
+                <a href="#">上一页</a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">下一页</a>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // 退出登录功能
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                window.location.href = '/logout';
+            }
+        }
+        
+        // 删除订单
+        function deleteOrder(orderId) {
+            if (confirm('确定要删除这个订单吗？')) {
+                window.location.href = '/order/delete/' + orderId;
+            }
+        }
+    </script>
+</body>
+</html>

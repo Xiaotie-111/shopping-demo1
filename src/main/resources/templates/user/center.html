@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            background-color: #232f3e;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar .logo-icon {
+            margin-right: 0.5rem;
+        }
+        
+        .navbar .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .navbar .nav-links li {
+            margin-right: 1.5rem;
+        }
+        
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .navbar .nav-links a:hover {
+            color: #ff9900;
+        }
+        
+        .navbar .nav-links a.active {
+            color: #ff9900;
+            font-weight: bold;
+        }
+        
+        .navbar .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .navbar .btn-primary {
+            background-color: #ff9900;
+            color: white;
+        }
+        
+        .navbar .btn-primary:hover {
+            background-color: #ff6600;
+        }
+        
+        .navbar .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+            margin-right: 0.5rem;
+        }
+        
+        .navbar .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 主要内容区域 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* 页面标题 */
+        .page-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+        
+        /* 表单容器 */
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* 表单标题 */
+        .form-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* 表单组 */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        /* 表单标签 */
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 表单输入框 */
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #ff9900;
+        }
+        
+        /* 表单分隔线 */
+        .form-divider {
+            border: 0;
+            height: 1px;
+            background-color: #eee;
+            margin: 2rem 0;
+        }
+        
+        /* 提交按钮 */
+        .btn-submit {
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-submit:hover {
+            background-color: #ff6600;
+        }
+        
+        /* 按钮容器 */
+        .btn-container {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">🛒</span>
+            <span>电商管理系统</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" >首页</a></li>
+            <li><a href="/product/list">商品分类</a></li>
+            <li><a href="/product/browse">热销</a></li>
+            <li><a href="/product/browse">新品</a></li>
+            <li><a href="/order/list">我的订单</a></li>
+            <li><a href="/user/center" class="active">个人中心</a></li>
+            <li><a href="/logout">退出</a></li>
+        </ul>
+        <div class="user-actions">
+            <a href="/cart" class="btn btn-outline">
+                购物车
+            </a>
+        </div>
+    </nav>
+    
+    <!-- 主要内容区域 -->
+    <div class="container">
+        <h1 class="page-title">个人中心</h1>
+        
+        <div class="form-container">
+            <!-- 收货信息 -->
+            <h2 class="form-title">收货信息</h2>
+            <form action="/user/updateAddress" method="post">
+                <div class="form-group">
+                    <label class="form-label" for="consignee">收货人</label>
+                    <input type="text" class="form-input" id="consignee" name="consignee" placeholder="请输入收货人" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="phone">联系电话</label>
+                    <input type="tel" class="form-input" id="phone" name="phone" placeholder="请输入联系电话" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="address">收货地址</label>
+                    <input type="text" class="form-input" id="address" name="address" placeholder="请输入收货地址" required>
+                </div>
+                
+                <div class="btn-container">
+                    <button type="submit" class="btn-submit">提交</button>
+                </div>
+            </form>
+            
+            <hr class="form-divider">
+            
+            <!-- 安全信息 -->
+            <h2 class="form-title">安全信息</h2>
+            <form action="/user/updatePassword" method="post">
+                <div class="form-group">
+                    <label class="form-label" for="password">原密码</label>
+                    <input type="password" class="form-input" id="password" name="password" placeholder="请输入原密码" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="newPassword">新密码</label>
+                    <input type="password" class="form-input" id="newPassword" name="newPassword" placeholder="请输入新密码" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword">确认密码</label>
+                    <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" placeholder="请输入确认密码" required>
+                </div>
+                
+                <div class="btn-container">
+                    <button type="submit" class="btn-submit">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

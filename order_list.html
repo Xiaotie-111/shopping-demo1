@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的订单</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            background-color: #232f3e;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar .logo-icon {
+            margin-right: 0.5rem;
+        }
+        
+        .navbar .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .navbar .nav-links li {
+            margin-right: 1.5rem;
+        }
+        
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .navbar .nav-links a:hover {
+            color: #ff9900;
+        }
+        
+        .navbar .nav-links a.active {
+            color: #ff9900;
+            font-weight: bold;
+        }
+        
+        .navbar .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .navbar .btn-primary {
+            background-color: #ff9900;
+            color: white;
+        }
+        
+        .navbar .btn-primary:hover {
+            background-color: #ff6600;
+        }
+        
+        .navbar .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+            margin-right: 0.5rem;
+        }
+        
+        .navbar .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 主要内容区域 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* 页面标题 */
+        .page-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+        
+        /* 订单列表容器 */
+        .order-list-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        
+        /* 订单列表标题 */
+        .order-list-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* 订单列表表格 */
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+        
+        .order-table th,
+        .order-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-table th {
+            background-color: #f9f9f9;
+            font-weight: bold;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .order-table td {
+            font-size: 14px;
+        }
+        
+        /* 订单状态 */
+        .status-paid {
+            color: #52c41a;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            color: #faad14;
+            font-weight: bold;
+        }
+        
+        .status-shipped {
+            color: #1890ff;
+            font-weight: bold;
+        }
+        
+        .status-completed {
+            color: #8c8c8c;
+            font-weight: bold;
+        }
+        
+        /* 支付方式 */
+        .payment-wechat {
+            color: #52c41a;
+        }
+        
+        .payment-alipay {
+            color: #1890ff;
+        }
+        
+        /* 操作按钮 */
+        .btn-action {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-view {
+            background-color: #1890ff;
+            color: white;
+            margin-right: 0.5rem;
+        }
+        
+        .btn-view:hover {
+            background-color: #40a9ff;
+        }
+        
+        .btn-pay {
+            background-color: #52c41a;
+            color: white;
+            margin-right: 0.5rem;
+        }
+        
+        .btn-pay:hover {
+            background-color: #73d13d;
+        }
+        
+        .btn-cancel {
+            background-color: #f5222d;
+            color: white;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #ff4d4f;
+        }
+        
+        /* 分页区域 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .pagination a {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .pagination a:hover {
+            border-color: #ff9900;
+            color: #ff9900;
+        }
+        
+        .pagination a.active {
+            background-color: #ff9900;
+            color: white;
+            border-color: #ff9900;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">🛒</span>
+            <span>电商管理系统</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" >首页</a></li>
+            <li><a href="/product/list">商品分类</a></li>
+            <li><a href="/product/browse">热销</a></li>
+            <li><a href="/product/browse">新品</a></li>
+            <li><a href="/order/list" class="active">我的订单</a></li>
+            <li><a href="/user/center">个人中心</a></li>
+            <li><a href="/logout">退出</a></li>
+        </ul>
+        <div class="user-actions">
+            <a href="/cart" class="btn btn-outline">
+                购物车
+            </a>
+        </div>
+    </nav>
+    
+    <!-- 主要内容区域 -->
+    <div class="container">
+        <h1 class="page-title">我的订单</h1>
+        
+        <div class="order-list-container">
+            <h2 class="order-list-title">订单列表</h2>
+            
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>总价</th>
+                        <th>商品详情</th>
+                        <th>收货信息</th>
+                        <th>订单状态</th>
+                        <th>支付方式</th>
+                        <th>下单时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 订单列表 -->
+                    
+                    
+                    <!-- 模拟订单数据 -->
+                    <tr>
+                        <td>1</td>
+                        <td>¥59.0</td>
+                        <td>意大利牛排三明治(35.0) x 1<br>半份土豆泥(24.0) x 1</td>
+                        <td>
+                            <div>张三 18929126043</div>
+                            <div>浙江省杭州市杭州电子科技大学</div>
+                        </td>
+                        <td><span class="status-paid">已付款</span></td>
+                        <td><span class="payment-wechat">微信</span></td>
+                        <td>2025-01-13 23:59:50</td>
+                        <td>
+                            <a href="#" class="btn-action btn-view">查看</a>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>2</td>
+                        <td>¥89.0</td>
+                        <td>经典汉堡套餐(55.0) x 1<br>可乐(15.0) x 1<br>薯条(19.0) x 1</td>
+                        <td>
+                            <div>李四 13800138000</div>
+                            <div>上海市浦东新区张江高科技园区</div>
+                        </td>
+                        <td><span class="status-pending">待支付</span></td>
+                        <td><span class="payment-alipay">支付宝</span></td>
+                        <td>2025-01-13 23:58:30</td>
+                        <td>
+                            <a href="#" class="btn-action btn-view">查看</a>
+                            <a href="#" class="btn-action btn-pay">支付</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <!-- 分页 -->
+            <div class="pagination">
+                <a href="#">上一页</a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">下一页</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
